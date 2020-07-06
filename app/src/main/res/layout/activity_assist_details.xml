@@ -1,0 +1,641 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/activity_assist_details"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_assist_list"
+    android:orientation="vertical">
+
+    <include layout="@layout/toolbar_layout" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="@dimen/size_8">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/size_15"
+                    android:drawableLeft="@drawable/ic_test_time"
+                    android:drawablePadding="@dimen/size_10"
+                    android:gravity="center"
+                    android:text="@string/test_time"
+                    android:textColor="@color/gray4"
+                    android:textSize="@dimen/size_15" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=" : "
+                    android:textColor="@color/gray4"
+                    android:textSize="@dimen/size_15" />
+
+                <TextView
+                    android:id="@+id/tv_test_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/size_10"
+                    android:gravity="center"
+                    android:text=""
+                    android:textColor="@color/gray4"
+                    android:textSize="@dimen/size_15" />
+
+            </LinearLayout>
+
+            <com.fang.dashview.DashView
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/size_0.5"
+                android:layout_marginLeft="@dimen/size_15"
+                android:layout_marginRight="@dimen/size_15"
+                app:dashOrientation="0"
+                app:dashWidth="@dimen/size_2"
+                app:lineColor="@color/gray"
+                app:lineHeight="@dimen/size_0.5"
+                app:lineWidth="@dimen/size_5" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="@dimen/size_8">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/size_15"
+                    android:drawableLeft="@drawable/ic_test_name"
+                    android:drawablePadding="@dimen/size_10"
+                    android:gravity="center"
+                    android:text="@string/test_name_2"
+                    android:textColor="@color/gray4"
+                    android:textSize="@dimen/size_15" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=" : "
+                    android:textColor="@color/gray4"
+                    android:textSize="@dimen/size_15" />
+
+                <TextView
+                    android:id="@+id/tv_test_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/size_10"
+                    android:gravity="center"
+                    android:text=""
+                    android:textColor="@color/gray4"
+                    android:textSize="@dimen/size_15" />
+
+            </LinearLayout>
+
+            <com.fang.dashview.DashView
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/size_0.5"
+                android:layout_marginLeft="@dimen/size_15"
+                android:layout_marginRight="@dimen/size_15"
+                app:dashOrientation="0"
+                app:dashWidth="@dimen/size_2"
+                app:lineColor="@color/gray"
+                app:lineHeight="@dimen/size_0.5"
+                app:lineWidth="@dimen/size_5" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="@dimen/size_8">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/size_15"
+                    android:drawableLeft="@drawable/ic_test_position"
+                    android:drawablePadding="@dimen/size_10"
+                    android:gravity="center"
+                    android:text="@string/test_position"
+                    android:textColor="@color/gray4"
+                    android:textSize="@dimen/size_15" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=" : "
+                    android:textColor="@color/gray4"
+                    android:textSize="@dimen/size_15" />
+
+                <TextView
+                    android:id="@+id/tv_test_position"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/size_10"
+                    android:gravity="left|center_vertical"
+                    android:text=""
+                    android:textColor="@color/gray4"
+                    android:textSize="@dimen/size_15" />
+
+            </LinearLayout>
+
+            <com.fang.dashview.DashView
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/size_0.5"
+                android:layout_marginLeft="@dimen/size_15"
+                android:layout_marginRight="@dimen/size_15"
+                app:dashOrientation="0"
+                app:dashWidth="@dimen/size_2"
+                app:lineColor="@color/gray"
+                app:lineHeight="@dimen/size_0.5"
+                app:lineWidth="@dimen/size_5" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="@dimen/size_8">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/size_15"
+                    android:drawableLeft="@drawable/ic_cable_length"
+                    android:drawablePadding="@dimen/size_10"
+                    android:gravity="center"
+                    android:text="@string/cable_length"
+                    android:textColor="@color/gray4"
+                    android:textSize="@dimen/size_15" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=" : "
+                    android:textColor="@color/gray4"
+                    android:textSize="@dimen/size_15" />
+
+                <TextView
+                    android:id="@+id/tv_cable_length"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/size_10"
+                    android:gravity="center"
+                    android:text=""
+                    android:textColor="@color/gray4"
+                    android:textSize="@dimen/size_15" />
+
+            </LinearLayout>
+
+            <com.fang.dashview.DashView
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/size_0.5"
+                android:layout_marginLeft="@dimen/size_15"
+                android:layout_marginRight="@dimen/size_15"
+                app:dashOrientation="0"
+                app:dashWidth="@dimen/size_2"
+                app:lineColor="@color/gray"
+                app:lineHeight="@dimen/size_0.5"
+                app:lineWidth="@dimen/size_5" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="@dimen/size_8">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/size_15"
+                    android:drawableLeft="@drawable/ic_cable_type"
+                    android:drawablePadding="@dimen/size_10"
+                    android:gravity="center"
+                    android:text="@string/cable_type"
+                    android:textColor="@color/gray4"
+                    android:textSize="@dimen/size_15" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=" : "
+                    android:textColor="@color/gray4"
+                    android:textSize="@dimen/size_15" />
+
+                <TextView
+                    android:id="@+id/tv_cable_type"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/size_10"
+                    android:gravity="center"
+                    android:text=""
+                    android:textColor="@color/gray4"
+                    android:textSize="@dimen/size_15" />
+
+            </LinearLayout>
+
+            <com.fang.dashview.DashView
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/size_0.5"
+                android:layout_marginLeft="@dimen/size_15"
+                android:layout_marginRight="@dimen/size_15"
+                app:dashOrientation="0"
+                app:dashWidth="@dimen/size_2"
+                app:lineColor="@color/gray"
+                app:lineHeight="@dimen/size_0.5"
+                app:lineWidth="@dimen/size_5" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="@dimen/size_8">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/size_15"
+                    android:drawableLeft="@drawable/ic_fault_type"
+                    android:drawablePadding="@dimen/size_10"
+                    android:gravity="center"
+                    android:text="@string/fault_type"
+                    android:textColor="@color/gray4"
+                    android:textSize="@dimen/size_15" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=" : "
+                    android:textColor="@color/gray4"
+                    android:textSize="@dimen/size_15" />
+
+                <TextView
+                    android:id="@+id/tv_fault_type"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/size_10"
+                    android:gravity="center"
+                    android:text=""
+                    android:textColor="@color/gray4"
+                    android:textSize="@dimen/size_15" />
+
+            </LinearLayout>
+
+            <com.fang.dashview.DashView
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/size_0.5"
+                android:layout_marginLeft="@dimen/size_15"
+                android:layout_marginRight="@dimen/size_15"
+                app:dashOrientation="0"
+                app:dashWidth="@dimen/size_2"
+                app:lineColor="@color/gray"
+                app:lineHeight="@dimen/size_0.5"
+                app:lineWidth="@dimen/size_5" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="@dimen/size_8">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/size_15"
+                    android:drawableLeft="@drawable/ic_fault_length"
+                    android:drawablePadding="@dimen/size_10"
+                    android:gravity="center"
+                    android:text="@string/fault_length"
+                    android:textColor="@color/gray4"
+                    android:textSize="@dimen/size_15" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=" : "
+                    android:textColor="@color/gray4"
+                    android:textSize="@dimen/size_15" />
+
+                <TextView
+                    android:id="@+id/tv_fault_length"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/size_10"
+                    android:gravity="center"
+                    android:text=""
+                    android:textColor="@color/gray4"
+                    android:textSize="@dimen/size_15" />
+
+            </LinearLayout>
+
+            <com.fang.dashview.DashView
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/size_0.5"
+                android:layout_marginLeft="@dimen/size_15"
+                android:layout_marginRight="@dimen/size_15"
+                app:dashOrientation="0"
+                app:dashWidth="@dimen/size_2"
+                app:lineColor="@color/gray"
+                app:lineHeight="@dimen/size_0.5"
+                app:lineWidth="@dimen/size_5" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="@dimen/size_8">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/size_15"
+                    android:drawableLeft="@drawable/ic_short_note"
+                    android:drawablePadding="@dimen/size_10"
+                    android:gravity="center"
+                    android:text="@string/short_note_information"
+                    android:textColor="@color/gray4"
+                    android:textSize="@dimen/size_15" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=" : "
+                    android:textColor="@color/gray4"
+                    android:textSize="@dimen/size_15" />
+
+                <TextView
+                    android:id="@+id/tv_short_note_information"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/size_10"
+                    android:gravity="center"
+                    android:text=""
+                    android:textColor="@color/gray4"
+                    android:textSize="@dimen/size_15" />
+
+            </LinearLayout>
+
+            <com.fang.dashview.DashView
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/size_0.5"
+                android:layout_marginLeft="@dimen/size_15"
+                android:layout_marginRight="@dimen/size_15"
+                app:dashOrientation="0"
+                app:dashWidth="@dimen/size_2"
+                app:lineColor="@color/gray"
+                app:lineHeight="@dimen/size_0.5"
+                app:lineWidth="@dimen/size_5" />
+
+            <Button
+                android:id="@+id/btn_over_voice_magnetic_field_data"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/size_47"
+                android:layout_marginRight="@dimen/size_47"
+                android:layout_marginTop="@dimen/size_22"
+                android:background="@drawable/btn_bg_assist_details"
+                android:text="@string/over_voice_magnetic_field_data"
+                android:textColor="@color/blue3"
+                android:textSize="@dimen/size_16" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/size_0.5"
+                android:layout_marginTop="@dimen/size_22"
+                android:background="@color/gray" />
+
+            <LinearLayout
+                android:id="@+id/ll_reply_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="visible">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/size_40"
+                    android:layout_marginRight="@dimen/size_40"
+                    android:layout_marginTop="@dimen/size_32"
+                    android:gravity="center_vertical"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:drawableLeft="@drawable/ic_no_reply"
+                        android:drawablePadding="@dimen/size_7"
+                        android:text="@string/language_selection"
+                        android:textColor="@color/gray4"
+                        android:textSize="@dimen/size_15" />
+
+                    <RelativeLayout
+                        android:id="@+id/rl_language_selection"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:background="@drawable/bg_round_border_99_corner_2">
+
+                        <TextView
+                            android:id="@+id/tv_language"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_centerInParent="true"
+                            android:paddingLeft="@dimen/size_4"
+                            android:textSize="12dp" />
+
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_alignParentRight="true"
+                            android:src="@drawable/ic_drop_down" />
+                    </RelativeLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/size_40"
+                    android:layout_marginRight="@dimen/size_40"
+                    android:layout_marginTop="@dimen/size_10"
+                    android:gravity="center_vertical"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:drawableLeft="@drawable/ic_replied"
+                        android:drawablePadding="@dimen/size_7"
+                        android:text="@string/reply_content"
+                        android:textColor="@color/gray4"
+                        android:textSize="@dimen/size_15" />
+
+                    <LinearLayout
+                        android:id="@+id/ll_reply_content"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginTop="@dimen/size_10">
+
+                        <TextView
+                            android:id="@+id/tv_reply_content"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:layout_centerInParent="true"
+                            android:paddingLeft="@dimen/size_4"
+                            android:gravity="center_vertical"
+                            android:scrollbars="vertical"
+                            android:background="@drawable/bg_round_border_99_corner_2"
+                            android:textSize="12dp" />
+
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_alignParentRight="true"
+                            android:background="@drawable/bg_drop_down"
+                            android:layout_toLeftOf="@id/tv_reply_content"
+                            android:id="@+id/ll_container"
+                            android:gravity="center">
+                            <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:layout_gravity="center"
+                                android:src="@drawable/ic_drop_down_arrow" />
+                        </LinearLayout>
+
+
+                    </LinearLayout>
+                </LinearLayout>
+
+                <Button
+                    android:id="@+id/btn_reply"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/size_22"
+                    android:layout_marginLeft="@dimen/size_47"
+                    android:layout_marginRight="@dimen/size_47"
+                    android:layout_marginTop="@dimen/size_22"
+                    android:background="@drawable/btn_bg_assist_details"
+                    android:text="@string/reply"
+                    android:textColor="@color/blue3"
+                    android:textSize="@dimen/size_15" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ll_reply_content_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/size_32"
+                    android:orientation="horizontal"
+                    android:padding="@dimen/size_8">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/size_20"
+                        android:drawableLeft="@drawable/ic_replied"
+                        android:drawablePadding="@dimen/size_10"
+                        android:gravity="center"
+                        android:text="@string/reply_status"
+                        android:textColor="@color/gray4"
+                        android:textSize="@dimen/size_14" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text=" : "
+                        android:textColor="@color/gray4"
+                        android:textSize="@dimen/size_14" />
+
+                    <TextView
+                        android:id="@+id/tv_reply_status"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/size_10"
+                        android:gravity="center"
+                        android:text="@string/replied"
+                        android:textColor="@color/gray4"
+                        android:textSize="@dimen/size_14" />
+                </LinearLayout>
+
+                <com.fang.dashview.DashView
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/size_0.5"
+                    android:layout_marginLeft="@dimen/size_15"
+                    android:layout_marginRight="@dimen/size_15"
+                    app:dashOrientation="0"
+                    app:dashWidth="@dimen/size_2"
+                    app:lineColor="@color/gray"
+                    app:lineHeight="@dimen/size_0.5"
+                    app:lineWidth="@dimen/size_5" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/size_32"
+                    android:orientation="horizontal"
+                    android:padding="@dimen/size_8">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/size_20"
+                        android:drawableLeft="@drawable/ic_replied"
+                        android:drawablePadding="@dimen/size_10"
+                        android:gravity="center"
+                        android:text="@string/reply_content"
+                        android:textColor="@color/gray4"
+                        android:textSize="@dimen/size_14" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text=" : "
+                        android:textColor="@color/gray4"
+                        android:textSize="@dimen/size_14" />
+
+                    <TextView
+                        android:id="@+id/tv_reply_content_2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/size_10"
+                        android:gravity="center"
+                        android:text=""
+                        android:textColor="@color/gray4"
+                        android:textSize="@dimen/size_14" />
+                </LinearLayout>
+
+                <com.fang.dashview.DashView
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/size_0.5"
+                    android:layout_marginLeft="@dimen/size_15"
+                    android:layout_marginRight="@dimen/size_15"
+                    app:dashOrientation="0"
+                    app:dashWidth="@dimen/size_2"
+                    app:lineColor="@color/gray"
+                    app:lineHeight="@dimen/size_0.5"
+                    app:lineWidth="@dimen/size_5" />
+
+
+            </LinearLayout>
+
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

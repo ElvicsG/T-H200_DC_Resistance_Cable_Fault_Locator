@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_assist_list"
+    android:orientation="vertical">
+
+    <include layout="@layout/toolbar_layout" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <RadioGroup
+            android:id="@+id/rg_language"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+
+            <RadioButton
+                android:id="@+id/rb_en"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/size_45"
+                android:button="@drawable/rb_button_style"
+                android:paddingBottom="@dimen/size_20"
+                android:paddingLeft="@dimen/size_28"
+                android:paddingTop="@dimen/size_20"
+                android:text="@string/en"
+                android:textColor="@color/gray4"
+                android:textSize="@dimen/size_15" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/size_0.5"
+                android:background="@color/gray" />
+
+            <RadioButton
+                android:id="@+id/rb_de"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/size_45"
+                android:button="@drawable/rb_button_style"
+                android:paddingBottom="@dimen/size_20"
+                android:paddingLeft="@dimen/size_28"
+                android:paddingTop="@dimen/size_20"
+                android:text="@string/de"
+                android:textColor="@color/gray4"
+                android:textSize="@dimen/size_15" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/size_0.5"
+                android:background="@color/gray" />
+
+            <RadioButton
+                android:id="@+id/rb_fr"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/size_45"
+                android:button="@drawable/rb_button_style"
+                android:paddingBottom="@dimen/size_20"
+                android:paddingLeft="@dimen/size_28"
+                android:paddingTop="@dimen/size_20"
+                android:text="@string/fr"
+                android:textColor="@color/gray4"
+                android:textSize="@dimen/size_15" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/size_0.5"
+                android:background="@color/gray" />
+
+            <RadioButton
+                android:id="@+id/rb_spain"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/size_45"
+                android:button="@drawable/rb_button_style"
+                android:paddingBottom="@dimen/size_20"
+                android:paddingLeft="@dimen/size_28"
+                android:paddingTop="@dimen/size_20"
+                android:text="@string/es"
+                android:textColor="@color/gray4"
+                android:textSize="@dimen/size_15" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/size_0.5"
+                android:background="@color/gray" />
+
+            <RadioButton
+                android:id="@+id/rb_zh"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/size_45"
+                android:button="@drawable/rb_button_style"
+                android:drawablePadding="@dimen/size_10"
+                android:paddingBottom="@dimen/size_20"
+                android:paddingLeft="@dimen/size_28"
+                android:paddingTop="@dimen/size_20"
+                android:text="@string/zh"
+                android:textColor="@color/gray4"
+                android:textSize="@dimen/size_15" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/size_0.5"
+                android:background="@color/gray" />
+            <RadioButton
+                android:id="@+id/rb_follow_sys"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/size_45"
+                android:button="@drawable/rb_button_style"
+                android:paddingBottom="@dimen/size_20"
+                android:paddingLeft="@dimen/size_28"
+                android:paddingTop="@dimen/size_20"
+                android:text="@string/follow_sys"
+                android:textColor="@color/gray4"
+                android:textSize="@dimen/size_15" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/size_0.5"
+                android:background="@color/gray" />
+        </RadioGroup>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/btn_confirm_switch_language"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/btn_bg_assist_details"
+            android:text="@string/confirm"
+            android:textColor="@color/blue3"
+            android:textSize="@dimen/size_15" />
+    </LinearLayout>
+
+</LinearLayout>

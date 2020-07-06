@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/rl_item"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="@dimen/size_15">
+
+    <LinearLayout
+        android:id="@+id/ll_container"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/iv_reply_status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/size_7"
+                android:src="@drawable/ic_no_reply" />
+
+            <TextView
+                android:id="@+id/tv_test_name_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/test_name_2"
+                android:textColor="@color/blue7"
+                android:textSize="@dimen/size_14" />
+
+            <TextView
+                android:id="@+id/tv_colon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=" : "
+                android:textColor="@color/gray4"
+                android:textSize="@dimen/size_12" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/iv_reply_status2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/ll_container"
+                android:layout_margin="@dimen/size_7"
+                android:src="@drawable/ic_no_reply"
+                android:visibility="invisible" />
+
+
+            <TextView
+                android:id="@+id/tv_test_time_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/ll_container"
+                android:layout_toRightOf="@id/iv_reply_status2"
+                android:text="@string/test_time"
+                android:textColor="@color/blue7"
+                android:textSize="@dimen/size_14" />
+
+            <TextView
+                android:id="@+id/tv_colon2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/ll_container"
+                android:layout_toRightOf="@id/tv_test_time_text"
+                android:text=" : "
+                android:textColor="@color/gray4"
+                android:textSize="@dimen/size_14" />
+
+        </LinearLayout>
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/ll_container2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/ll_container"
+        android:gravity="center_vertical"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/iv_reply_status3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/ll_container"
+                android:layout_margin="@dimen/size_7"
+                android:src="@drawable/ic_no_reply"
+                android:visibility="invisible" />
+
+            <TextView
+                android:id="@+id/tv_test_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="你好"
+                android:textColor="@color/gray4"
+                android:textSize="@dimen/size_14" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <ImageView
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/ll_container"
+                android:layout_margin="@dimen/size_7"
+                android:src="@drawable/ic_no_reply"
+                android:visibility="invisible" />
+
+            <TextView
+                android:id="@+id/tv_test_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="你好"
+
+                android:textColor="@color/gray4"
+                android:textSize="@dimen/size_14" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tv_reply_status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_below="@id/ll_container2"
+        android:layout_centerVertical="true"
+        android:text="未回复>"
+        android:textColor="@color/red"
+        android:textSize="@dimen/size_14" />
+</RelativeLayout>

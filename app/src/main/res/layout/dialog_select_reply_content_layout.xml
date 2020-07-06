@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white_f6"
+    android:gravity="center"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/ll_shadow"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/ic_shadow"
+        android:orientation="horizontal"></LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="@dimen/size_13">
+
+        <RadioGroup
+            android:id="@+id/rg_reply"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingLeft="@dimen/size_10">
+
+            <RadioButton
+                android:id="@+id/rb_all"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:button="@drawable/rb_button_style"
+                android:drawablePadding="@dimen/size_10"
+                android:paddingTop="@dimen/size_10"
+                android:paddingBottom="@dimen/size_10"
+                android:paddingLeft="@dimen/size_10"
+                android:text="@string/all"
+                android:textColor="@color/gray4"
+                android:textSize="@dimen/size_15" />
+
+            <RadioButton
+                android:id="@+id/rb_replied"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="@dimen/size_10"
+                android:paddingBottom="@dimen/size_10"
+                android:button="@drawable/rb_button_style"
+                android:paddingLeft="@dimen/size_10"
+                android:text="@string/replied"
+                android:textColor="@color/gray4"
+                android:textSize="@dimen/size_15" />
+
+            <RadioButton
+                android:id="@+id/rb_un_reply"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:button="@drawable/rb_button_style"
+                android:paddingLeft="@dimen/size_10"
+                android:paddingTop="@dimen/size_10"
+                android:paddingBottom="@dimen/size_10"
+                android:text="@string/un_reply"
+                android:textColor="@color/gray4"
+                android:textSize="@dimen/size_15" />
+        </RadioGroup>
+    </LinearLayout>
+</LinearLayout>
