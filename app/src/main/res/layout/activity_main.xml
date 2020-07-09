@@ -137,7 +137,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="@dimen/size_15"
-                android:text="@string/no_bluetooth"
+                android:text="@string/link_lost"
                 android:textColor="@color/gray5"
                 android:textSize="@dimen/sp_17" />
         </LinearLayout>

@@ -100,3 +100,4 @@ public class BaseActivity extends AppCompatActivity {
 
 /*更改记录*/
 //GC20200703    去网络断开提示
+//GC20200707    蓝牙搜索列表添加

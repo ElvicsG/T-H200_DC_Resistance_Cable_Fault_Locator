@@ -96,16 +96,6 @@ public class LoginActivity extends BaseActivity {
     }
 
     /**
-     * 显示主界面
-     */
-    private void showMain() {
-        Intent intent = new Intent();
-        intent.setClass(LoginActivity.this, MainActivity.class);
-        startActivity(intent);
-        finish();
-    }
-
-    /**
      * 登录
      */
     @OnClick(R.id.btn_login)
@@ -122,7 +112,24 @@ public class LoginActivity extends BaseActivity {
             return;
         }
         requestLoginApi(etUserName.getText().toString(), etPassword.getText().toString());*/
-        showMain();
+        //蓝牙搜索列表    //GC20200707
+        Util.showToast(LoginActivity.this, getString(R.string.connecting_wait));
+//        Intent intent = new Intent(LoginActivity.this, SeekDeviceActivity.class);
+        Intent intent = new Intent();
+        intent.setClass(LoginActivity.this,SeekDeviceActivity.class);
+        startActivity(intent);
+        finish();
+//        showMain();
+    }
+
+    /**
+     * 显示主界面
+     */
+    private void showMain() {
+        Intent intent = new Intent();
+        intent.setClass(LoginActivity.this, MainActivity.class);
+        startActivity(intent);
+        finish();
     }
 
     private void requestLoginApi(final String userName, final String password) {

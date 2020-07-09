@@ -85,7 +85,7 @@
     <string name="clear">清空</string>
     <string name="Gain">增益</string>
 
-    <string name="no_bluetooth">T-H200已断开，请检查主机状态！</string>
+    <string name="link_lost">T-H200已断开，请检查主机状态！</string>
     <string name="home_note">请选择测距方式！</string>
     <string name="btn_sheath">电缆护层故障测试</string>
     <string name="btn_main">电缆主绝缘故障测试</string>
@@ -121,5 +121,24 @@
     <string name="fault_location_l">故障距离：</string>
     <string name="distance_percentage">距离百分比：</string>
     <string name="exit_prompt">请再按一次退出！</string>
+    <string name="connecting_wait">正在连接,请稍后…</string>
+    <string name="find_bluetooth_device">查找蓝牙设备</string>
+    <string name="does_not_find_device">本机没有找到蓝牙硬件或驱动</string>
+    <string name="opening_bluetooth">打开蓝牙中</string>
+    <string name="auto_open_failed">自动打开蓝牙失败，请手动打开蓝牙！</string>
+    <string name="waiting_to_open">等待蓝牙打开，5秒后，尝试连接！</string>
+    <string name="connection_failed_unable_to_get_Socket">连接失败,无法得到Socket！</string>
+    <string name="connect">连接</string>
+    <string name="success">成功!</string>
+    <string name="connection_failed">连接失败！</string>
+    <string name="demo_notice">已进入演示模式！</string>
+    <string name="paired_device">已配对设备</string>
+    <string name="no_paired_device">未配对设备</string>
+    <string name="please_find_device">请查找设备!</string>
+    <string name="find_device">查找设备</string>
+    <string name="automatic_connection_please_wait">自动连接中，请稍等......</string>
+    <string name="finding_device">查找设备中…</string>
+    <string name="select_the_device_to_connect_to">选择要连接的设备</string>
+
 
 </resources>

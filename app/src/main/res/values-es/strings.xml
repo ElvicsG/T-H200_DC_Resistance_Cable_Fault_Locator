@@ -85,7 +85,7 @@
     <string name="clear">清空</string>
     <string name="Gain">Gain</string>
 
-    <string name="no_bluetooth">Disconnected to sensor, please check the instrument!</string>
+    <string name="link_lost">Disconnected to sensor, please check the instrument!</string>
     <string name="home_note">Please select test mode!</string>
     <string name="btn_sheath">Cable sheath fault test</string>
     <string name="btn_main">Cable main insulation fault test</string>
@@ -121,5 +121,23 @@
     <string name="fault_location_l">Fault Location:</string>
     <string name="distance_percentage">Distance Percentage:</string>
     <string name="exit_prompt">Please press again to exit!</string>
+    <string name="connecting_wait">Connecting, please wait…</string>
+    <string name="find_bluetooth_device">Find Bluetooth device</string>
+    <string name="does_not_find_device">The machine does not find Bluetooth hardware or drivers</string>
+    <string name="opening_bluetooth">Opening</string>
+    <string name="auto_open_failed">Failed to open Bluetooth automatically,please open Bluetooth manually!</string>
+    <string name="waiting_to_open">Wait to open Bluetooth, 5 seconds later, try to connect!</string>
+    <string name="connection_failed_unable_to_get_Socket">Connection failed, unable to get Socket!</string>
+    <string name="connect">Connection to</string>
+    <string name="success">successfully!</string>
+    <string name="connection_failed">Connection failed!</string>
+    <string name="demo_notice">Entered demo mode!</string>
+    <string name="paired_device">Paired device</string>
+    <string name="no_paired_device">Unpaired device</string>
+    <string name="please_find_device">Please find a device!</string>
+    <string name="find_device">Find the device</string>
+    <string name="automatic_connection_please_wait">Automatic connection, please wait......</string>
+    <string name="finding_device">Finding device......</string>
+    <string name="select_the_device_to_connect_to">Select the device to connect to</string>
 
 </resources>

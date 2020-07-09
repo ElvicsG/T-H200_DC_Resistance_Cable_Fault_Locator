@@ -54,6 +54,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name="com.kehui.t_h200.activity.SeekDeviceActivity" android:screenOrientation="portrait"/>
+        <activity android:name="com.kehui.t_h200.activity.DeviceListActivity" android:screenOrientation="portrait"/>
         <activity android:name="com.kehui.t_h200.activity.SettingActivity" android:screenOrientation="portrait"/>
         <activity android:name="com.kehui.t_h200.activity.AssistDetailsActivity" android:screenOrientation="portrait"/>
         <activity
