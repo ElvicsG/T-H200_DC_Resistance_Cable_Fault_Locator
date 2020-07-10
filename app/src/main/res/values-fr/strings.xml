@@ -140,5 +140,7 @@
     <string name="automatic_connection_please_wait">Automatic connection, please wait......</string>
     <string name="finding_device">Finding device......</string>
     <string name="select_the_device_to_connect_to">Select the device to connect to</string>
+    <string name="can_not_get_input_stream_via_Bluetooth_socket">Can not get input stream via Bluetooth socket,
+        please reopen the application to connect</string>
 
 </resources>

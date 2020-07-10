@@ -10,7 +10,6 @@ import com.kehui.t_h200.activity.MainActivity;
  * Created by jwj on 2018/4/9.
  * app重启广播
  */
-
 public class RestartAppReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {

@@ -134,7 +134,7 @@ public class SwitchLanguageActivity extends BaseActivity {
                 finish();
                 SettingActivity.instance.finish();
                 Intent intent = new Intent(SwitchLanguageActivity.this, RestartAppReceiver.class);
-                intent.setPackage("inno.com.kehuiphoneapp");
+                intent.setPackage("com.kehui.t_h200");
                 intent.setAction("restartapp");
                 sendBroadcast(intent);
 

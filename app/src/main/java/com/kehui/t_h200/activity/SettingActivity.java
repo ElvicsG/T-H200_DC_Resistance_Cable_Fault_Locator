@@ -93,11 +93,13 @@ public class SettingActivity extends BaseActivity {
                 intent.setClass(SettingActivity.this,LoginActivity.class);
                 startActivity(intent);
                 finish();
-
                 MainActivity.instance.finish();
                 PrefUtils.setString(SettingActivity.this, AppConfig.myUserName, "");
                 PrefUtils.setString(SettingActivity.this, AppConfig.myPassword, "");
                 break;
+            default:
+                break;
+
         }
     }
 

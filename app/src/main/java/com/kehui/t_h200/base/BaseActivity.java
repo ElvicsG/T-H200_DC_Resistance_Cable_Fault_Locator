@@ -13,10 +13,10 @@ import android.view.WindowManager;
 import com.kehui.t_h200.utils.MultiLanguageUtil;
 
 /**
- * Created by jwj on 2018/4/14.
+ * @author Gong
+ * @date 2020/7/9
  * 基类activity
  */
-
 public class BaseActivity extends AppCompatActivity {
     public int screenWidth;
     public int screenHeight;
@@ -24,10 +24,10 @@ public class BaseActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState, PersistableBundle persistentState) {
         super.onCreate(savedInstanceState);
-        WindowManager wm = (WindowManager) this
-                .getSystemService(Context.WINDOW_SERVICE);
+        WindowManager wm = (WindowManager) this.getSystemService(Context.WINDOW_SERVICE);
         screenWidth = wm.getDefaultDisplay().getWidth();
         screenHeight = wm.getDefaultDisplay().getHeight();
+
     }
 
     public static int getStatusBarHeight(Context context) {
@@ -58,6 +58,7 @@ public class BaseActivity extends AppCompatActivity {
         lp.alpha = 1f;
         window.setAttributes(lp);
     }
+
     public boolean isNetVisible() {
         ConnectivityManager connectivity = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         if (connectivity != null) {
@@ -101,3 +102,4 @@ public class BaseActivity extends AppCompatActivity {
 /*更改记录*/
 //GC20200703    去网络断开提示
 //GC20200707    蓝牙搜索列表添加
+//GC20200709    蓝牙数据处理

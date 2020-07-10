@@ -2,8 +2,12 @@ package com.kehui.t_h200.activity;
 
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothSocket;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -71,6 +75,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
@@ -87,6 +92,8 @@ import retrofit2.converter.scalars.ScalarsConverterFactory;
  * 协助列表页面
  */
 public class MainActivity extends BaseActivity {
+
+    private static final String TAG = "MainActivity";
 
     @BindView(R.id.iv_title_logo)
     ImageView ivTitleLogo;
@@ -224,6 +231,53 @@ public class MainActivity extends BaseActivity {
 
     private int pageCoding = 1;
     private boolean modeState;
+    /**
+     * 蓝牙相关部分
+     */
+    private BluetoothSocket bluetoothSocket;
+    private BluetoothSocket reconnectSocket = null;
+    private BluetoothDevice bluetoothDevice;
+    /**
+     * 获得本设备的蓝牙适配器实例      返回值：如果设备具备蓝牙功能，返回BluetoothAdapter 实例；否则，返回null对象
+     */
+    private BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+    private final static String MY_UUID = "00001101-0000-1000-8000-00805F9B34FB";
+    private boolean needConnect;
+    /**
+     * 接收蓝牙数据
+     */
+    public InputStream inputStream;
+    public int[] stream;
+    public int streamLength;
+    public int[] blueStream;
+    public int blueStreamLen;
+    public boolean processingStream;
+    public boolean hasGotStream;
+    public int[] streamLeft;
+    public int leftLen;
+    public boolean hasLeft;
+
+
+    public static final int LINK_LOST       = 1;
+    public static final int LINK_CONNECT = 2;
+
+    public Handler handle = new Handler(msg -> {
+        switch (msg.what) {
+            case LINK_LOST:
+                Log.e(TAG,  "无连接！");
+                Util.showToast(this, getResources().getString(R.string.link_lost));
+                break;
+            case LINK_CONNECT:
+                Log.e(TAG,  "已连接！");
+                Toast.makeText(this, getResources().getString(R.string.connect) + " " + bluetoothDevice.getName() + " " + getResources().getString(R.string.success), Toast.LENGTH_SHORT).show();
+                /*hasGotStream = false;
+                getInputStream();*/
+                break;
+            default:
+                break;
+        }
+        return false;
+    });
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -245,8 +299,7 @@ public class MainActivity extends BaseActivity {
 
         //检测版本更新
         initUpdateApk();
-        WindowManager wm = (WindowManager) this
-                .getSystemService(Context.WINDOW_SERVICE);
+        WindowManager wm = (WindowManager) this.getSystemService(Context.WINDOW_SERVICE);
         screenWidth = wm.getDefaultDisplay().getWidth();
         screenHeight = wm.getDefaultDisplay().getHeight();
         initToolbar();
@@ -254,6 +307,342 @@ public class MainActivity extends BaseActivity {
         initDatePopupWindow();
         initDate();
         initView();
+        //蓝牙数据处理    //GC20200709
+        initData();
+        //获取蓝牙数据
+        getInputStream();
+        //处理蓝牙数据
+        handleStream.start();
+
+    }
+
+    /**
+     * 数组初始化
+     */
+    private void initData() {
+        //缓存的蓝牙数据
+        stream = new int[1024];
+        streamLength = 0;
+        //需要处理的蓝牙数据
+        blueStream = new int[1024];
+        blueStreamLen = 0;
+        //将蓝牙数据分包后的剩余数据
+        streamLeft = new int[6];
+        leftLen = 0;
+    }
+
+    /**
+     * 获取蓝牙数据   //GC20200709
+     */
+    private void getInputStream() {
+        try {
+            bluetoothSocket = App.getInstances().getBluetoothSocket();
+            if (bluetoothSocket != null) {
+                //通过蓝牙socket获得输入流
+                inputStream = bluetoothSocket.getInputStream();
+            }
+        } catch (IOException e) {
+            Toast.makeText(this, getResources().getString(R.string.can_not_get_input_stream_via_Bluetooth_socket), Toast.LENGTH_SHORT).show();
+            handle.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    finish();
+                }
+            }, 3000);
+            e.printStackTrace();
+        }
+        if (!hasGotStream) {
+            //当前连接状态为连接
+            Constants.BluetoothState = true;
+            //启动获取蓝牙数据的线程
+            new Thread(getStream).start();
+            hasGotStream = true;
+        }
+    }
+
+    /**
+     * 获取蓝牙数据的线程
+     */
+    Runnable getStream = new Runnable() {
+        @Override
+        public void run() {
+            int len;
+            //存放每个输入流的字节数组
+            byte[] buffer = new byte[1024];
+            while (true) {
+                try {
+                    do {
+                        if (inputStream == null) {
+                            Log.e("打印-inputStream", "null");
+
+                            //切换语言重连
+                            stream = null;
+                            stream = new int[1024];
+                            streamLength = 0;
+                            blueStream = null;
+                            blueStream = new int[1024];
+                            blueStreamLen = 0;
+                            processingStream = false;
+                            //启动蓝牙连接线程
+                            needConnect = false;
+                            new Thread(() -> {
+                                while (!needConnect) {
+                                    connect();
+                                }
+                            }).start();
+                            return;
+                        }
+                        len = inputStream.read(buffer, 0, buffer.length);
+                        Log.i("每个输入流", "len: " + len + "  时间：" + System.currentTimeMillis());
+                        //将传过来的字节数组转变为int数组
+                        for (int i = 0, j = streamLength; i < len; i++, j++) {
+                            stream[j] = buffer[i] & 0xff;
+                        }
+                        streamLength += len;
+                        Log.i("要处理的蓝牙数据", "streamLength:" + streamLength);
+                        //在不处理数据时缓存数个输入流
+                        if (streamLength >= 70 && !processingStream) {
+                            System.arraycopy(stream, 0, blueStream, 0, streamLength);
+                            blueStreamLen = streamLength;
+                            processingStream = true;
+                            //缓存的数据清零
+                            streamLength = 0;
+                        }
+                    } while (inputStream.available() != 0);
+
+                } catch (IOException e) {
+                    try {
+                        inputStream.close();
+                    } catch (IOException e1) {
+                        e1.printStackTrace();
+                    }
+                    inputStream = null;
+
+                    //硬件断开蓝牙重连
+                    Message message = new Message();
+                    message.what = LINK_LOST;
+                    handle.sendMessage(message);
+                    //当前连接状态为断开
+                    Constants.BluetoothState = false;
+                    //重置变量
+                    stream = null;
+                    stream = new int[1024];
+                    streamLength = 0;
+                    blueStream = null;
+                    blueStream = new int[1024];
+                    blueStreamLen = 0;
+                    processingStream = false;
+                    //启动蓝牙连接线程
+                    needConnect = false;
+                    new Thread(() -> {
+                        while (!needConnect) {
+                            connect();
+                        }
+                    }).start();
+                    return;
+                }
+            }
+        }
+    };
+
+    /**
+     * 尝试蓝牙连接
+     */
+    public void connect() {
+        //读取设置数据
+        SharedPreferences shareData = getSharedPreferences("Add", 0);
+        String address = shareData.getString(String.valueOf(1), null);
+        //获取远程蓝牙设备
+        bluetoothDevice = bluetoothAdapter.getRemoteDevice(address);
+        //用服务号得到socket
+        try {
+            reconnectSocket = bluetoothDevice.createRfcommSocketToServiceRecord(UUID.fromString(MY_UUID));
+            App.getInstances().setBluetoothSocket(reconnectSocket);
+            App.getInstances().setBluetoothDevice(bluetoothDevice);
+            App.getInstances().setBluetoothAdapter(bluetoothAdapter);
+
+        } catch (IOException e) {
+//            Toast.makeText(this, getResources().getString(R.string.Connection_failed_unable_to_get_Socket) + e, Toast.LENGTH_SHORT).show();
+        }
+        //连接socket
+        try {
+            if (reconnectSocket != null) {
+                reconnectSocket.connect();
+                needConnect = true;
+                Message message = new Message();
+                message.what = LINK_CONNECT;
+                handle.sendMessage(message);
+
+                hasGotStream = false;
+                getInputStream();
+                Log.e(TAG, "尝试连接成功");
+            }
+
+        } catch (IOException e) {
+            try {
+                reconnectSocket.close();
+                reconnectSocket = null;
+                Log.e(TAG, "尝试连接走到异常");
+                Thread.sleep(10000);
+            } catch (Exception ignored) {
+            }
+        }
+    }
+
+    /**
+     * 处理蓝牙数据的线程
+     */
+    Thread handleStream = new Thread(new Runnable() {
+        @Override
+        public void run() {
+            while (true) {
+                if (processingStream) {
+                    handleStream(blueStream, blueStreamLen);
+                    processingStream = false;
+                }
+            }
+        }
+    });
+
+    /**
+     * @param temp 需要处理的蓝牙数据
+     * @param tempLength   数据长度
+     */
+    private void handleStream(int[] temp, int tempLength) {
+        int i = 0;
+        //处理过的数据长度
+        int dataNum = 0;
+        int[] receivedData = new int[6];
+
+        //处理过后有剩余数据
+        if (hasLeft) {
+            for (int j = leftLen, k = 0; j < 6; j++, k++) {
+                //合并剩余数据
+                streamLeft[j] = temp[k];
+            }
+            for (int i1 = 0; i1 < 6; i1++) {
+                //找数据头 FF FF
+                if ((temp[i] == 0xFF) && (temp[i + 1] == 0xFF)) {
+                    for (int i2 = 0, j = i1; i2 < 6; i2++, j++) {
+                        if (j >= 6) {
+                            receivedData[i2] = temp[i + j - leftLen];
+                        } else {
+                            //截取数据包
+                            receivedData[i2] = streamLeft[j];
+                        }
+                        //处理数据包
+                        doStream(receivedData);
+                    }
+                }
+            }
+            hasLeft = false;
+        }
+        //开始遍历
+        for (; i < tempLength - 6; i++) {
+            //找数据头 FF FF
+            if ((temp[i] == 0xFF) && (temp[i + 1] == 0xFF)) {
+                for (int j = i, k = 0; j < (i + 6); j++, k++) {
+                    //截取数据包
+                    receivedData[k] = temp[j];
+                }
+                //处理数据包
+                doStream(receivedData);
+            }
+            dataNum = i;
+        }
+        if (dataNum == tempLength) {
+            hasLeft = false;
+        } else {
+            //把剩下的数据存到临时数组中 同时设置有剩余的数组
+            for (int j = dataNum + 1, k = 0; j < tempLength; j++, k++) {
+                streamLeft[k] = temp[j];
+            }
+            leftLen = tempLength - i;
+            hasLeft = true;
+        }
+
+    }
+
+    /**
+     * 计算电压、电流
+     */
+    private int j = 0;
+    private double voltageSum = 0.0;
+    private double currentSum = 0.0;
+    private double resistivity1;
+    private double cableLength = 0.0;
+    protected void doStream(int[] data) {
+        int valueU;
+        int valueI;
+        double U1;
+        double I1;
+        double R1;
+        double L1;
+
+        //I1 = 电流值ADI/1.0151*6.35175421291293*1.0102（mA)
+        //U1 = 电压值ADU/ 0.1979619895313889/1.97199650112410（uV）
+        //R1 = 电压U1/电流I1/100(m Ω)
+        valueU = data[2] * 256 + data[3];
+        valueI = data[4] * 256 + data[5];
+
+        //currentSum = currentSum + valueI * 0.064 / 5.2;
+        currentSum = currentSum + valueI * 64. / 5200.;
+        voltageSum = voltageSum + valueU * 800. / 81.;
+        j++;
+        if(j == 10) {
+            //电压平均值
+            U1 = voltageSum / 10.;
+            //电流平均值     //有系数  I1 = currentSum / 10. * 0.98;
+            I1 = currentSum / 1000. * 98.;
+            //计算电阻
+            if (I1 != 0.0) {
+                R1 = U1 / I1;
+            } else {
+                R1 = 0.0;
+            }
+            currentSum = 0.0;
+            voltageSum = 0.0;
+            j = 0;
+
+            //取整
+            U1 = Math.round(U1 + 0.5);
+            //保留2位小数
+            I1 = Math.round(I1 * 100. + 0.5) / 100.;
+            //保留1位小数
+            R1 = Math.round(R1 * 10. + 0.5) / 10.;
+
+            Log.e(TAG,  "数据" + U1);
+
+            //计算电阻率
+            L1 = cableLength;
+            if (L1 != 0.0) {
+                resistivity1 = U1 / I1 / L1;
+            } else {
+                resistivity1 = 0.0;
+            }
+            //保留4位小数  //G0329
+            resistivity1 = Math.round(resistivity1 * 10000. + 0.5) / 10000.;
+            //故障距离L2 = 电压值U2*100/电流值I2/ 电阻率ρ（m）
+            double L2 = U1 / I1 / resistivity1;
+            //取整
+            L2 = Math.round(L2 + 0.5);
+
+//            //全长电压, 整数
+//            txtView = (TextView)findViewById(R.id.txtView10U);
+//            txtView.setText(String.format("%.0f", U1));
+//            //测量电流, 2位小数
+//            txtView = (TextView)findViewById(R.id.txtView10I);
+//            txtView.setText(String.format("%.2f", I1)); //G170317单精度浮点型，也就是float型的格式 限制值保留2位小数
+//            //全长电阻, 1位小数
+//            txtView = (TextView)findViewById(R.id.txtView10R);
+//            txtView.setText(String.format("%.1f", R1));
+//            //电阻率, 4位小数 //G0329
+//            txtView = (TextView)findViewById(R.id.txtView10Rate);
+//            txtView.setText(String.format("%.4f", resistivity1));
+
+//            txtView = (TextView)findViewById(R.id.txtView12L);
+//            txtView.setText(String.format(" %.0f ", L2));
+        }
 
     }
 
@@ -332,6 +721,18 @@ public class MainActivity extends BaseActivity {
         currentSettingTime = 0;
         startTime = "";
         endTime = "";
+        try {
+            try {
+                bluetoothSocket.close();
+                if (inputStream != null) {
+                    inputStream.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         super.onDestroy();
     }
 
@@ -645,8 +1046,9 @@ public class MainActivity extends BaseActivity {
                 if (currentSettingTime == 0) {
                     startTime = time;
                     activity.page = 1;
-                    if (!endTime.equals(""))
+                    if (!endTime.equals("")) {
                         activity.request(activity.page + "", startTime, endTime, activity.replyStatus);
+                    }
 
                 } else {
                     endTime = time;

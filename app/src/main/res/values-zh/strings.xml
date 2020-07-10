@@ -139,5 +139,6 @@
     <string name="automatic_connection_please_wait">自动连接中，请稍等......</string>
     <string name="finding_device">查找设备中…</string>
     <string name="select_the_device_to_connect_to">选择要连接的设备</string>
+    <string name="can_not_get_input_stream_via_Bluetooth_socket">不能通过蓝牙socket获得输入流,请重新打开应用进行连接</string>
 
 </resources>

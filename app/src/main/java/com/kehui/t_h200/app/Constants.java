@@ -7,4 +7,6 @@ package com.kehui.t_h200.app;
 public class Constants {
     public static int DEFAULT_TIMEOUT = 20;
     public static String rows = "10";
+
+    public static Boolean BluetoothState;
 }

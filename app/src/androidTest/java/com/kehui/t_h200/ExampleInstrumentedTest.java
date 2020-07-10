@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
 
-        assertEquals("inno.com.kehuiphoneapp", appContext.getPackageName());
+        assertEquals("com.kehui.t_h200", appContext.getPackageName());
     }
 }
