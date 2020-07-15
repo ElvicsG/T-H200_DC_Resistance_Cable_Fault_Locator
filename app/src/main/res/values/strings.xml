@@ -96,6 +96,7 @@
     <string name="line_main2">参考接线：\n以完好相作为辅助线，测试故障相；\n这两条线路在末端短接！</string>
     <string name="previous">上一步</string>
     <string name="next">下一步</string>
+    <string name="end">结&#12288;&#12288;束</string>
     <string name="measure_resistivity">测量电阻率</string>
     <string name="attention">注意：</string>
     <string name="txtAttention1">1.按操作要求，缓慢升高直流电压；</string>
@@ -104,7 +105,7 @@
     <string name="txtAttention4">3.电缆护层电阻率参考值约为0.058Ω/km。</string>
     <string name="fault_location">故障距离</string>
     <string name="btn_save">保存</string>
-    <string name="btn_calculate_resistivity">计算电阻率</string>
+    <string name="manual_input_resistivity">手动输入电阻率</string>
     <string name="btn_calculate_distance">计算距离</string>
     <string name="voltage">μV</string>
     <string name="current">mA</string>
@@ -120,7 +121,7 @@
     <string name="fault_resistance">故障段电阻：</string>
     <string name="fault_location_l">故障距离：</string>
     <string name="distance_percentage">距离百分比：</string>
-    <string name="exit_prompt">请再按一次退出！</string>
+    <string name="exit_prompt">请再按一次退出软件！</string>
     <string name="connecting_wait">正在连接,请稍后…</string>
     <string name="find_bluetooth_device">查找蓝牙设备</string>
     <string name="does_not_find_device">本机没有找到蓝牙硬件或驱动</string>
@@ -140,6 +141,12 @@
     <string name="finding_device">查找设备中…</string>
     <string name="select_the_device_to_connect_to">选择要连接的设备</string>
     <string name="can_not_get_input_stream_via_Bluetooth_socket">不能通过蓝牙socket获得输入流,请重新打开应用进行连接</string>
-
+    <string name="no_resistivity">无电阻率数值，确定进行下一步？\n（电阻率可通过输入电缆全长获得）</string>
+    <string name="no_length">请先输入电缆全长！</string>
+    <string name="exit_confirmation">确定结束本次测试？</string>
+    <string name="resistivity_note">过低的测试电流会导致测距结果不准，确定进行下一步？</string>
+    <string name="btn_input">保存</string>
+    <string name="cancel_manual">取消手动输入</string>
+    <string name="no_resistivity_manual">手动输入时电阻率不能为0！</string>
 
 </resources>

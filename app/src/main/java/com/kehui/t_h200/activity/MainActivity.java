@@ -32,6 +32,7 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
@@ -190,10 +191,66 @@ public class MainActivity extends BaseActivity {
     TextView tvSheath;
     @BindView(R.id.tv_main)
     TextView tvMain;
-    @BindView(R.id.tv_sheath_calculate)
-    TextView tvSheathCalculate;
-    @BindView(R.id.tv_main_calculate)
-    TextView tvMainCalculate;
+    @BindView(R.id.btn_sheath)
+    TextView btnSheath;
+    @BindView(R.id.btn_main)
+    TextView btnMain;
+    @BindView(R.id.tv_sheath_test_voltage)
+    TextView tvSheathTestVoltage;
+    @BindView(R.id.tv_sheath_test_current)
+    TextView tvSheathTestCurrent;
+    @BindView(R.id.tv_sheath_resistance)
+    TextView tvSheathResistance;
+    @BindView(R.id.tv_sheath_percentage)
+    TextView tvSheathPercentage;
+    @BindView(R.id.et_sheath_length)
+    EditText etSheathLength;
+    @BindView(R.id.et_sheath_resistivity)
+    TextView etSheathResistivity;
+    @BindView(R.id.tv_sheath_fault_location)
+    TextView tvSheathFaultLocation;
+    @BindView(R.id.tv_main_test_voltage)
+    TextView tvMainTestVoltage;
+    @BindView(R.id.tv_main_test_current)
+    TextView tvMainTestCurrent;
+    @BindView(R.id.tv_main_resistance)
+    TextView tvMainResistance;
+    @BindView(R.id.tv_main_percentage)
+    TextView tvMainPercentage;
+    @BindView(R.id.et_main_length)
+    EditText etMainLength;
+    @BindView(R.id.et_main_resistivity)
+    TextView etMainResistivity;
+    @BindView(R.id.tv_main_fault_location)
+    TextView tvMainFaultLocation;
+    @BindView(R.id.btn_sheath_next)
+    Button btnSheathNext;
+    @BindView(R.id.btn_main_next)
+    Button btnMainNext;
+    @BindView(R.id.rl_sheath_test_voltage)
+    RelativeLayout rlSheathTestVoltage;
+    @BindView(R.id.rl_sheath_test_current)
+    RelativeLayout rlSheathTestCurrent;
+    @BindView(R.id.rl_sheath_test_voltage2)
+    RelativeLayout rlSheathTestVoltage2;
+    @BindView(R.id.rl_sheath_test_current2)
+    RelativeLayout rlSheathTestCurrent2;
+    @BindView(R.id.rl_main_test_voltage)
+    RelativeLayout rlMainTestVoltage;
+    @BindView(R.id.rl_main_test_current)
+    RelativeLayout rlMainTestCurrent;
+    @BindView(R.id.rl_main_test_voltage2)
+    RelativeLayout rlMainTestVoltage2;
+    @BindView(R.id.rl_main_test_current2)
+    RelativeLayout rlMainTestCurrent2;
+    @BindView(R.id.rl_sheath_length)
+    RelativeLayout rlSheathLength;
+    @BindView(R.id.rl_sheath_length2)
+    RelativeLayout rlSheathLength2;
+    @BindView(R.id.rl_main_length)
+    RelativeLayout rlMainLength;
+    @BindView(R.id.rl_main_length2)
+    RelativeLayout rlMainLength2;
 
 
     private PopupWindow replyPopupWindow;
@@ -256,22 +313,41 @@ public class MainActivity extends BaseActivity {
     public int[] streamLeft;
     public int leftLen;
     public boolean hasLeft;
+    /**
+     * 数值计算和显示
+     */
+    private int j = 0;
+    private double voltageSum = 0.0;
+    private double currentSum = 0.00;
+    private double U1;
+    private double I1;
+    private double resistance;
+    private double cableLength = 0.0;
+    private double resistivity;
+    private double U2;
+    private double I2;
+    private double percentage;
+    private double faultLocation;
+    public boolean noChange;
+    public boolean clickManual;
 
 
-    public static final int LINK_LOST       = 1;
+    public static final int LINK_LOST = 1;
     public static final int LINK_CONNECT = 2;
+    public static final int UI_REFRESH = 3;
 
     public Handler handle = new Handler(msg -> {
         switch (msg.what) {
             case LINK_LOST:
-                Log.e(TAG,  "无连接！");
+                Log.e(TAG, "无连接！");
                 Util.showToast(this, getResources().getString(R.string.link_lost));
                 break;
             case LINK_CONNECT:
-                Log.e(TAG,  "已连接！");
+                Log.e(TAG, "已连接！");
                 Toast.makeText(this, getResources().getString(R.string.connect) + " " + bluetoothDevice.getName() + " " + getResources().getString(R.string.success), Toast.LENGTH_SHORT).show();
-                /*hasGotStream = false;
-                getInputStream();*/
+                break;
+            case UI_REFRESH:
+                refreshUI();
                 break;
             default:
                 break;
@@ -303,16 +379,31 @@ public class MainActivity extends BaseActivity {
         screenWidth = wm.getDefaultDisplay().getWidth();
         screenHeight = wm.getDefaultDisplay().getHeight();
         initToolbar();
+
         initReplyPopupWindow();
         initDatePopupWindow();
         initDate();
         initView();
+
         //蓝牙数据处理    //GC20200709
         initData();
         //获取蓝牙数据
         getInputStream();
         //处理蓝牙数据
         handleStream.start();
+
+    }
+
+    /**
+     * 初始化标题栏
+     */
+    private void initToolbar() {
+//        ivSetting.setVisibility(View.VISIBLE);
+        ivTitleLogo.setVisibility(View.VISIBLE);
+        setSupportActionBar(commonTitleTb);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        commonTitleTb.setPadding(0, getStatusBarHeight(MainActivity.this), 0, 0);
+        commonTitleTv.setText(R.string.app_number);
 
     }
 
@@ -505,8 +596,8 @@ public class MainActivity extends BaseActivity {
     });
 
     /**
-     * @param temp 需要处理的蓝牙数据
-     * @param tempLength   数据长度
+     * @param temp       需要处理的蓝牙数据
+     * @param tempLength 数据长度
      */
     private void handleStream(int[] temp, int tempLength) {
         int i = 0;
@@ -522,7 +613,7 @@ public class MainActivity extends BaseActivity {
             }
             for (int i1 = 0; i1 < 6; i1++) {
                 //找数据头 FF FF
-                if ((temp[i] == 0xFF) && (temp[i + 1] == 0xFF)) {
+                if ((temp[i1] == 0xFF) && (temp[i1 + 1] == 0xFF)) {
                     for (int i2 = 0, j = i1; i2 < 6; i2++, j++) {
                         if (j >= 6) {
                             receivedData[i2] = temp[i + j - leftLen];
@@ -566,84 +657,708 @@ public class MainActivity extends BaseActivity {
     /**
      * 计算电压、电流
      */
-    private int j = 0;
-    private double voltageSum = 0.0;
-    private double currentSum = 0.0;
-    private double resistivity1;
-    private double cableLength = 0.0;
-    protected void doStream(int[] data) {
+    private void doStream(int[] data) {
         int valueU;
         int valueI;
-        double U1;
-        double I1;
-        double R1;
+        double voltage;
+        double current;
         double L1;
 
-        //I1 = 电流值ADI/1.0151*6.35175421291293*1.0102（mA)
-        //U1 = 电压值ADU/ 0.1979619895313889/1.97199650112410（uV）
-        //R1 = 电压U1/电流I1/100(m Ω)
         valueU = data[2] * 256 + data[3];
         valueI = data[4] * 256 + data[5];
-
-        //currentSum = currentSum + valueI * 0.064 / 5.2;
-        currentSum = currentSum + valueI * 64. / 5200.;
+//        Log.e(TAG, "valueU = " + valueU);
+//        Log.e(TAG, "valueI = " + valueI);
+        //G?
         voltageSum = voltageSum + valueU * 800. / 81.;
+        currentSum = currentSum + valueI * 64. / 5200.;
         j++;
-        if(j == 10) {
+        if (j == 10) {
+            //voltage = 电压值ADU/ 0.1979619895313889/1.97199650112410（uV）
+            //current = 电流值ADI/1.0151*6.35175421291293*1.0102（mA)
+            //resistance = 电压U1/电流I1/100(m Ω)
             //电压平均值
-            U1 = voltageSum / 10.;
-            //电流平均值     //有系数  I1 = currentSum / 10. * 0.98;
-            I1 = currentSum / 1000. * 98.;
-            //计算电阻
-            if (I1 != 0.0) {
-                R1 = U1 / I1;
-            } else {
-                R1 = 0.0;
+            voltage = voltageSum / 10;
+            //电流平均值     //有系数 0.98;
+            current = currentSum / 10 * 98 / 100;
+            if (pageCoding == 2) {
+                if (!noChange) {
+                    U1 = voltage;
+                    I1 = current;
+                    if (current != 0.00) {
+                        resistance = U1 / I1;
+                        Log.e(TAG, "voltageSum = " + voltageSum);
+                        Log.e(TAG, "voltageSum = " + voltageSum);
+                        Log.e(TAG, "U1 = " + U1);
+                        Log.e(TAG, "I1 = " + I1);
+                        Log.e(TAG, "resistance = " + resistance);
+                    } else {
+                        resistance = 0.0;
+                    }
+                }
+
+            } else if (pageCoding == 4) {
+                U2 = voltage;
+                I2 = current;
+                if (current != 0.00 && !clickManual) {
+                    if (resistance != 0.0) {
+                        percentage = (U2 / I2) / resistance * 100;
+                    }
+                    Log.e(TAG, "percentage = " + percentage);
+                } else {
+                    percentage = 0.00;
+                }
             }
-            currentSum = 0.0;
-            voltageSum = 0.0;
-            j = 0;
+            handle.sendEmptyMessage(UI_REFRESH);
 
-            //取整
-            U1 = Math.round(U1 + 0.5);
-            //保留2位小数
-            I1 = Math.round(I1 * 100. + 0.5) / 100.;
-            //保留1位小数
-            R1 = Math.round(R1 * 10. + 0.5) / 10.;
-
-            Log.e(TAG,  "数据" + U1);
-
-            //计算电阻率
-            L1 = cableLength;
-            if (L1 != 0.0) {
-                resistivity1 = U1 / I1 / L1;
-            } else {
-                resistivity1 = 0.0;
-            }
-            //保留4位小数  //G0329
-            resistivity1 = Math.round(resistivity1 * 10000. + 0.5) / 10000.;
             //故障距离L2 = 电压值U2*100/电流值I2/ 电阻率ρ（m）
-            double L2 = U1 / I1 / resistivity1;
+            double L2 = voltage / current / resistivity;
             //取整
             L2 = Math.round(L2 + 0.5);
-
-//            //全长电压, 整数
-//            txtView = (TextView)findViewById(R.id.txtView10U);
-//            txtView.setText(String.format("%.0f", U1));
-//            //测量电流, 2位小数
-//            txtView = (TextView)findViewById(R.id.txtView10I);
-//            txtView.setText(String.format("%.2f", I1)); //G170317单精度浮点型，也就是float型的格式 限制值保留2位小数
-//            //全长电阻, 1位小数
-//            txtView = (TextView)findViewById(R.id.txtView10R);
-//            txtView.setText(String.format("%.1f", R1));
-//            //电阻率, 4位小数 //G0329
-//            txtView = (TextView)findViewById(R.id.txtView10Rate);
-//            txtView.setText(String.format("%.4f", resistivity1));
-
-//            txtView = (TextView)findViewById(R.id.txtView12L);
 //            txtView.setText(String.format(" %.0f ", L2));
+
+            //重置
+            voltageSum = 0.0;
+            currentSum = 0.00;
+            j = 0;
+
         }
 
+    }
+
+    @OnClick({R.id.ll_report_time, R.id.ll_reply_content, R.id.ll_other_filter, R.id.tv_cable_sheath, R.id.tv_cable_main,
+            R.id.btn_sheath_previous, R.id.btn_sheath_next, R.id.btn_main_previous, R.id.btn_main_next,
+            R.id.btn_sheath, R.id.btn_main})
+    public void onViewClicked(View view) {
+        switch (view.getId()) {
+            case R.id.ll_report_time:
+                showDateDialog();
+                break;
+            case R.id.ll_reply_content:
+                showReplyStatusDialog();
+                break;
+            case R.id.ll_other_filter:
+                break;
+            case R.id.tv_cable_sheath:
+                //护层测试界面
+                modeState = false;
+                commonTitleTv.setText(R.string.btn_sheath);
+                llContainer.setVisibility(View.GONE);
+                srlRefresh.setVisibility(View.GONE);
+                llException.setVisibility(View.GONE);
+                llHome.setVisibility(View.GONE);
+                llSheath.setVisibility(View.VISIBLE);
+                llSheathTest.setVisibility(View.GONE);
+                llMain.setVisibility(View.GONE);
+                pageCoding = 1;
+                switchInterface();
+                break;
+            case R.id.tv_cable_main:
+                //主绝缘测试界面
+                modeState = true;
+                commonTitleTv.setText(R.string.btn_main);
+                llContainer.setVisibility(View.GONE);
+                srlRefresh.setVisibility(View.GONE);
+                llException.setVisibility(View.GONE);
+                llHome.setVisibility(View.GONE);
+                llSheath.setVisibility(View.GONE);
+                llMain.setVisibility(View.VISIBLE);
+                llMainTest.setVisibility(View.GONE);
+                pageCoding = 1;
+                switchInterface();
+                break;
+            case R.id.btn_sheath_previous:
+                if (pageCoding > 0) {
+                    pageCoding--;
+                    switchInterface();
+                }
+                break;
+            case R.id.btn_sheath_next:
+                if (pageCoding < 4) {
+                    if (pageCoding == 2) {
+                        if(clickManual && !etSheathResistivity.getText().toString().trim().isEmpty()) {
+                            resistivity = Double.parseDouble(etSheathResistivity.getText().toString());
+                        }
+                        //测量电阻率界面
+                        if ( etSheathResistivity.getText().toString().trim().isEmpty()
+                                || etSheathResistivity.getText().toString().trim().equals("0")
+                                || etSheathResistivity.getText().toString().trim().equals("0.0000") ) {
+                            if (clickManual){
+                                showManualNoResistivityDialog();
+                            } else {
+                                showNoResistivityDialog();
+                            }
+                        } else if (I1 < 30 && !clickManual) {
+                            showNoteDialog();
+                        } else {
+                            pageCoding++;
+                            switchInterface();
+                        }
+                    } else {
+                        pageCoding++;
+                        switchInterface();
+                    }
+                } else {
+                    showEndDialog();
+                }
+                break;
+            case R.id.btn_main_previous:
+                if (pageCoding > 0) {
+                    pageCoding--;
+                    switchInterface();
+                }
+                break;
+            case R.id.btn_main_next:
+                if (pageCoding < 4) {
+                    if (pageCoding == 2) {
+                        if(clickManual && !etMainResistivity.getText().toString().trim().isEmpty()) {
+                            resistivity = Double.parseDouble(etMainResistivity.getText().toString());
+                        }
+                        if (etMainResistivity.getText().toString().trim().isEmpty()
+                                || etMainResistivity.getText().toString().trim().equals("0")
+                                || etMainResistivity.getText().toString().trim().equals("0.0000") ) {
+                            if (clickManual){
+                                showManualNoResistivityDialog();
+                            } else {
+                                showNoResistivityDialog();
+                            }
+                        } else if (I1 < 10 && !clickManual) {
+                            showNoteDialog();
+                        }else {
+                            pageCoding++;
+                            switchInterface();
+                        }
+                    } else {
+                        pageCoding++;
+                        switchInterface();
+                    }
+                } else {
+                    showEndDialog();
+                }
+                break;
+            case R.id.btn_sheath:
+                if (pageCoding == 2) {
+                    if (!clickManual) {
+                        //手动输入电阻率
+                        clickManual = true;
+                        rlSheathTestVoltage.setVisibility(View.GONE);
+                        rlSheathTestVoltage2.setVisibility(View.GONE);
+                        rlSheathTestCurrent.setVisibility(View.GONE);
+                        rlSheathTestCurrent2.setVisibility(View.GONE);
+                        rlSheathTestResistance.setVisibility(View.GONE);
+                        rlSheathTestResistance2.setVisibility(View.GONE);
+                        rlSheathLength.setVisibility(View.GONE);
+                        rlSheathLength2.setVisibility(View.GONE);
+                        etSheathResistivity.setText("");
+                        etSheathResistivity.setEnabled(true);
+                        btnSheath.setText(R.string.cancel_manual);
+                    } else {
+                        //取消手动输入电阻率
+                        clickManual = false;
+                        rlSheathTestVoltage.setVisibility(View.VISIBLE);
+                        rlSheathTestVoltage2.setVisibility(View.VISIBLE);
+                        rlSheathTestCurrent.setVisibility(View.VISIBLE);
+                        rlSheathTestCurrent2.setVisibility(View.VISIBLE);
+                        rlSheathTestResistance.setVisibility(View.VISIBLE);
+                        rlSheathTestResistance2.setVisibility(View.VISIBLE);
+                        rlSheathLength.setVisibility(View.VISIBLE);
+                        rlSheathLength2.setVisibility(View.VISIBLE);
+                        etSheathResistivity.setText("");
+                        etSheathResistivity.setEnabled(false);
+                        btnSheath.setText(R.string.manual_input_resistivity);
+                    }
+
+                } else if (pageCoding == 4) {
+//                    //故障距离L2 = 电压值U2*100/电流值I2/ 电阻率ρ（m）
+//                    double L2 = voltage / current / resistivity;
+//                    //取整
+//                    L2 = Math.round(L2 + 0.5);
+//                    //            txtView.setText(String.format(" %.0f ", L2));
+                }
+                break;
+            case R.id.btn_main:
+                if (pageCoding == 2) {
+                    if (!clickManual) {
+                        //手动输入电阻率
+                        clickManual = true;
+                        rlMainTestVoltage.setVisibility(View.GONE);
+                        rlMainTestVoltage2.setVisibility(View.GONE);
+                        rlMainTestCurrent.setVisibility(View.GONE);
+                        rlMainTestCurrent2.setVisibility(View.GONE);
+                        rlMainTestResistance.setVisibility(View.GONE);
+                        rlMainTestResistance2.setVisibility(View.GONE);
+                        rlMainLength.setVisibility(View.GONE);
+                        rlMainLength2.setVisibility(View.GONE);
+                        etMainResistivity.setText("");
+                        etMainResistivity.setEnabled(true);
+                        btnMain.setText(R.string.cancel_manual);
+                    } else {
+                        //取消手动输入电阻率
+                        clickManual = false;
+                        rlMainTestVoltage.setVisibility(View.VISIBLE);
+                        rlMainTestVoltage2.setVisibility(View.VISIBLE);
+                        rlMainTestCurrent.setVisibility(View.VISIBLE);
+                        rlMainTestCurrent2.setVisibility(View.VISIBLE);
+                        rlMainTestResistance.setVisibility(View.VISIBLE);
+                        rlMainTestResistance2.setVisibility(View.VISIBLE);
+                        rlMainLength.setVisibility(View.VISIBLE);
+                        rlMainLength2.setVisibility(View.VISIBLE);
+                        etMainResistivity.setText("");
+                        etMainResistivity.setEnabled(false);
+                        btnMain.setText(R.string.manual_input_resistivity);
+                    }
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
+    /**
+     * 界面切换显示
+     */
+    private void switchInterface() {
+        switch (pageCoding) {
+            case 0:
+                //显示主页界面
+                commonTitleTv.setText(R.string.app_number);
+                llHome.setVisibility(View.VISIBLE);
+                if (!modeState) {
+                    llSheath.setVisibility(View.GONE);
+                    //清空输入的全长和相关的计算
+                    etSheathLength.setText("");
+                    etSheathResistivity.setText("");
+                    tvSheathFaultLocation.setText("");
+                } else {
+                    llMain.setVisibility(View.GONE);
+                    etMainLength.setText("");
+                    etMainResistivity.setText("");
+                    tvMainFaultLocation.setText("");
+                }
+                //电阻率界面数据可以刷新
+                noChange = false;
+                //手动输入初始化
+                clickManual = false;
+                break;
+            case 1:
+                //从主页进入 图片——测试完好相或护层
+                if (!modeState) {
+                    llSheathPicture.setVisibility(View.VISIBLE);
+                    llSheathTest.setVisibility(View.GONE);
+                    ivSheath.setImageResource(R.drawable.ic_sheath1);
+                    tvSheath.setText(R.string.line_sheath);
+                    btnSheathNext.setText(R.string.next);
+                } else {
+                    llMainPicture.setVisibility(View.VISIBLE);
+                    llMainTest.setVisibility(View.GONE);
+                    ivMain.setImageResource(R.drawable.ic_main1);
+                    tvMain.setText(R.string.line_main);
+                    btnMainNext.setText(R.string.next);
+                }
+                //电阻率界面数据可以刷新
+                noChange = false;
+                break;
+            case 2:
+                //第一次点击下一页 显示测量电阻率
+                if (!modeState) {
+                    llSheathPicture.setVisibility(View.GONE);
+                    llSheathTest.setVisibility(View.VISIBLE);
+                    tvSheathTitle.setText(R.string.measure_resistivity);
+                    tvSheathAttention2.setVisibility(View.VISIBLE);
+                    tvSheathAttention3.setVisibility(View.VISIBLE);
+
+                    if (!clickManual) {
+                        //处于自动计算电阻率状态
+                        rlSheathTestVoltage.setVisibility(View.VISIBLE);
+                        rlSheathTestVoltage2.setVisibility(View.VISIBLE);
+                        rlSheathTestCurrent.setVisibility(View.VISIBLE);
+                        rlSheathTestCurrent2.setVisibility(View.VISIBLE);
+                        rlSheathTestResistance.setVisibility(View.VISIBLE);
+                        rlSheathTestResistance2.setVisibility(View.VISIBLE);
+                        rlSheathLength.setVisibility(View.VISIBLE);
+                        rlSheathLength2.setVisibility(View.VISIBLE);
+                        etSheathResistivity.setEnabled(false);
+                        btnSheath.setText(R.string.manual_input_resistivity);
+                    } else {
+                        //处于手动输入状态
+                        rlSheathTestVoltage.setVisibility(View.GONE);
+                        rlSheathTestVoltage2.setVisibility(View.GONE);
+                        rlSheathTestCurrent.setVisibility(View.GONE);
+                        rlSheathTestCurrent2.setVisibility(View.GONE);
+                        rlSheathTestResistance.setVisibility(View.GONE);
+                        rlSheathTestResistance2.setVisibility(View.GONE);
+                        rlSheathLength.setVisibility(View.GONE);
+                        rlSheathLength2.setVisibility(View.GONE);
+                        etSheathResistivity.setEnabled(true);
+                        btnSheath.setText(R.string.cancel_manual);
+                    }
+                    rlSheathTestResistivity.setVisibility(View.VISIBLE);
+                    rlSheathTestResistivity2.setVisibility(View.VISIBLE);
+                    rlSheathDistancePercentage.setVisibility(View.GONE);
+                    rlSheathDistancePercentage2.setVisibility(View.GONE);
+                    rlSheathFaultLocation.setVisibility(View.GONE);
+                    rlSheathFaultLocation2.setVisibility(View.GONE);
+                } else {
+                    llMainPicture.setVisibility(View.GONE);
+                    llMainTest.setVisibility(View.VISIBLE);
+                    tvMainTitle.setText(R.string.measure_resistivity);
+                    tvMainAttention2.setVisibility(View.VISIBLE);
+
+                    if (!clickManual) {
+                        //处于自动计算电阻率状态
+                        rlMainTestVoltage.setVisibility(View.VISIBLE);
+                        rlMainTestVoltage2.setVisibility(View.VISIBLE);
+                        rlMainTestCurrent.setVisibility(View.VISIBLE);
+                        rlMainTestCurrent2.setVisibility(View.VISIBLE);
+                        rlMainTestResistance.setVisibility(View.VISIBLE);
+                        rlMainTestResistance2.setVisibility(View.VISIBLE);
+                        rlMainLength.setVisibility(View.VISIBLE);
+                        rlMainLength2.setVisibility(View.VISIBLE);
+                        etMainResistivity.setEnabled(false);
+                        btnMain.setText(R.string.manual_input_resistivity);
+                    } else {
+                        //处于手动输入状态
+                        rlMainTestVoltage.setVisibility(View.GONE);
+                        rlMainTestVoltage2.setVisibility(View.GONE);
+                        rlMainTestCurrent.setVisibility(View.GONE);
+                        rlMainTestCurrent2.setVisibility(View.GONE);
+                        rlMainTestResistance.setVisibility(View.GONE);
+                        rlMainTestResistance2.setVisibility(View.GONE);
+                        rlMainLength.setVisibility(View.GONE);
+                        rlMainLength2.setVisibility(View.GONE);
+                        etMainResistivity.setEnabled(true);
+                        btnMain.setText(R.string.cancel_manual);
+                    }
+                    rlMainTestResistivity.setVisibility(View.VISIBLE);
+                    rlMainTestResistivity2.setVisibility(View.VISIBLE);
+                    rlMainDistancePercentage.setVisibility(View.GONE);
+                    rlMainDistancePercentage2.setVisibility(View.GONE);
+                    rlMainFaultLocation.setVisibility(View.GONE);
+                    rlMainFaultLocation2.setVisibility(View.GONE);
+                }
+                break;
+            case 3:
+                //第二次点击 图片——测试故障相或护层
+                if (!modeState) {
+                    llSheathPicture.setVisibility(View.VISIBLE);
+                    llSheathTest.setVisibility(View.GONE);
+                    ivSheath.setImageResource(R.drawable.ic_sheath2);
+                    tvSheath.setText(R.string.line_sheath2);
+                    btnSheathNext.setText(R.string.next);
+                } else {
+                    llMainPicture.setVisibility(View.VISIBLE);
+                    llMainTest.setVisibility(View.GONE);
+                    ivMain.setImageResource(R.drawable.ic_main2);
+                    tvMain.setText(R.string.line_main2);
+                    btnMainNext.setText(R.string.next);
+                }
+                //电阻率界面数据不可以刷新
+                noChange = true;
+                break;
+            case 4:
+                //第三次点击 给出故障距离
+                if (!modeState) {
+                    llSheathPicture.setVisibility(View.GONE);
+                    llSheathTest.setVisibility(View.VISIBLE);
+                    tvSheathTitle.setText(R.string.fault_location);
+                    btnSheathNext.setText(R.string.end);
+                    tvSheathAttention2.setVisibility(View.GONE);
+                    tvSheathAttention3.setVisibility(View.GONE);
+                    rlSheathTestResistance.setVisibility(View.GONE);
+                    rlSheathTestResistance2.setVisibility(View.GONE);
+                    rlSheathTestResistivity.setVisibility(View.GONE);
+                    rlSheathTestResistivity2.setVisibility(View.GONE);
+
+                    rlSheathTestVoltage.setVisibility(View.VISIBLE);
+                    rlSheathTestVoltage2.setVisibility(View.VISIBLE);
+                    rlSheathTestCurrent.setVisibility(View.VISIBLE);
+                    rlSheathTestCurrent2.setVisibility(View.VISIBLE);
+                    if (!clickManual) {
+                        rlSheathDistancePercentage.setVisibility(View.VISIBLE);
+                        rlSheathDistancePercentage2.setVisibility(View.VISIBLE);
+                        rlSheathLength.setVisibility(View.VISIBLE);
+                        rlSheathLength2.setVisibility(View.VISIBLE);
+                    } else {
+                        rlSheathDistancePercentage.setVisibility(View.GONE);
+                        rlSheathDistancePercentage2.setVisibility(View.GONE);
+                        rlSheathLength.setVisibility(View.GONE);
+                        rlSheathLength2.setVisibility(View.GONE);
+                    }
+                    rlSheathFaultLocation.setVisibility(View.VISIBLE);
+                    rlSheathFaultLocation2.setVisibility(View.VISIBLE);
+                    btnSheath.setText(R.string.btn_calculate_distance);
+                } else {
+                    llMainPicture.setVisibility(View.GONE);
+                    llMainTest.setVisibility(View.VISIBLE);
+                    tvMainTitle.setText(R.string.fault_location);
+                    btnMainNext.setText(R.string.end);
+                    tvMainAttention2.setVisibility(View.GONE);
+                    rlMainTestResistance.setVisibility(View.GONE);
+                    rlMainTestResistance2.setVisibility(View.GONE);
+                    rlMainTestResistivity.setVisibility(View.GONE);
+                    rlMainTestResistivity2.setVisibility(View.GONE);
+
+                    rlMainTestVoltage.setVisibility(View.VISIBLE);
+                    rlMainTestVoltage2.setVisibility(View.VISIBLE);
+                    rlMainTestCurrent.setVisibility(View.VISIBLE);
+                    rlMainTestCurrent2.setVisibility(View.VISIBLE);
+                    if (!clickManual) {
+                        rlMainDistancePercentage.setVisibility(View.VISIBLE);
+                        rlMainDistancePercentage2.setVisibility(View.VISIBLE);
+                        rlMainLength.setVisibility(View.VISIBLE);
+                        rlMainLength2.setVisibility(View.VISIBLE);
+                    }else {
+                        rlMainDistancePercentage.setVisibility(View.GONE);
+                        rlMainDistancePercentage2.setVisibility(View.GONE);
+                        rlMainLength.setVisibility(View.GONE);
+                        rlMainLength2.setVisibility(View.GONE);
+                    }
+                    rlMainFaultLocation.setVisibility(View.VISIBLE);
+                    rlMainFaultLocation2.setVisibility(View.VISIBLE);
+                    btnMain.setText(R.string.btn_calculate_distance);
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
+    /**
+     * 数据刷新控制
+     */
+    private void refreshUI() {
+        switch (pageCoding) {
+            case 0:
+                break;
+            case 1:
+                break;
+            case 2:
+                //测量电阻率界面
+                if (!clickManual) {
+                    if (!modeState) {
+                        //测试电压：1位小数   测试电流：2位小数   测试电阻：1位小数
+                        tvSheathTestVoltage.setText(String.format("%.1f", U1));
+                        tvSheathTestCurrent.setText(String.format("%.2f", I1));
+                        tvSheathResistance.setText(String.format("%.1f", resistance));
+                        if (!etSheathLength.getText().toString().trim().isEmpty()) {
+                            //计算电阻率
+                            cableLength = Double.parseDouble(etSheathLength.getText().toString());
+                            if (cableLength != 0.0) {
+                                resistivity = U1 / I1 / cableLength;
+                            } else {
+                                resistivity = 0.0000;
+                            }
+                            //电阻率：4位小数
+                            etSheathResistivity.setText(String.format("%.4f", resistivity));
+                        } else {
+                            etSheathResistivity.setText("");
+                        }
+                    } else {
+                        tvMainTestVoltage.setText(String.format("%.1f", U1));
+                        tvMainTestCurrent.setText(String.format("%.2f", I1));
+                        tvMainResistance.setText(String.format("%.1f", resistance));
+                        if (!etMainLength.getText().toString().trim().isEmpty()) {
+                            //计算电阻率
+                            cableLength = Double.parseDouble(etMainLength.getText().toString());
+                            if (cableLength != 0.0) {
+                                resistivity = U1 / I1 / cableLength;
+                            } else {
+                                resistivity = 0.0000;
+                            }
+                            //电阻率：4位小数
+                            etMainResistivity.setText(String.format("%.4f", resistivity));
+                        } else {
+                            etMainResistivity.setText("");
+                        }
+                    }
+
+                }
+                break;
+            case 3:
+                break;
+            case 4:
+                //故障距离界面
+                if (!modeState) {
+                    //测试电压：1位小数   测试电流：2位小数   距离百分比：2位小数
+                    tvSheathTestVoltage.setText(String.format("%.1f", U2));
+                    tvSheathTestCurrent.setText(String.format("%.2f", I2));
+                    if (!clickManual) {
+                        tvSheathPercentage.setText(String.format("%.2f", percentage));
+                        if (!etSheathLength.getText().toString().trim().isEmpty()) {
+                            faultLocation = cableLength * percentage / 100;
+                            tvSheathFaultLocation.setText(String.format(" %.1f ", faultLocation));
+                        } else {
+                            tvSheathFaultLocation.setText("");
+                        }
+
+                    } else {
+                        if (I2 != 0.00) {
+                            faultLocation = U2 / I2 / resistivity;
+                            tvSheathFaultLocation.setText(String.format(" %.1f ", faultLocation));
+                        } else {
+                            tvSheathFaultLocation.setText("");
+                        }
+                    }
+                } else {
+                    tvMainTestVoltage.setText(String.format("%.1f", U2));
+                    tvMainTestCurrent.setText(String.format("%.2f", I2));
+                    tvMainPercentage.setText(String.format("%.2f", percentage));
+                    if (!etMainLength.getText().toString().trim().isEmpty()) {
+                        faultLocation = cableLength * percentage / 100;
+                        tvMainFaultLocation.setText(String.format(" %.1f ", faultLocation));
+                    } else {
+                        tvMainFaultLocation.setText("");
+                    }
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
+    /**
+     * 对话框 无电阻率下一步确认
+     */
+    private void showNoResistivityDialog() {
+        final CustomDialog dialog = new CustomDialog(this);
+        dialog.show();
+        dialog.setHintText(getString(R.string.no_resistivity));
+        dialog.setLeftButton(getString(R.string.confirm), v -> {
+            dialog.dismiss();
+            if (!modeState) {
+                //护层最小电流
+                if (I1 < 30) {
+                    showNoteDialog();
+                } else {
+                    pageCoding++;
+                    switchInterface();
+                }
+
+            } else {
+                //主绝缘最小电流
+                if (I1 < 10) {
+                    showNoteDialog();
+                } else {
+                    pageCoding++;
+                    switchInterface();
+                }
+
+            }
+        });
+        dialog.setRightButton(getString(R.string.cancel), v -> {
+            dialog.dismiss();
+        });
+    }
+
+    /**
+     * 对话框 手动模式下无电阻率下一步确认
+     */
+    private void showManualNoResistivityDialog() {
+        final CustomDialog dialog = new CustomDialog(this);
+        dialog.show();
+        dialog.setHintText(getString(R.string.no_resistivity_manual));
+        dialog.setLeftButton(getString(R.string.confirm), v -> {
+            dialog.dismiss();
+        });
+        dialog.setRightButton(getString(R.string.cancel), v -> {
+            dialog.dismiss();
+        });
+    }
+
+    /**
+     * 对话框 电流过低下一步确认
+     */
+    private void showNoteDialog() {
+        final CustomDialog dialog = new CustomDialog(this);
+        dialog.show();
+        dialog.setHintText(getString(R.string.resistivity_note));
+        dialog.setLeftButton(getString(R.string.confirm), v -> {
+            dialog.dismiss();
+            pageCoding++;
+            switchInterface();
+        });
+        dialog.setRightButton(getString(R.string.cancel), v -> {
+            dialog.dismiss();
+        });
+    }
+
+    /**
+     * 对话框 结束确认
+     */
+    private void showEndDialog() {
+        final CustomDialog dialog = new CustomDialog(this);
+        dialog.show();
+        dialog.setHintText(getString(R.string.exit_confirmation));
+        dialog.setLeftButton(getString(R.string.confirm), v -> {
+            dialog.dismiss();
+            pageCoding = 0;
+            switchInterface();
+        });
+        dialog.setRightButton(getString(R.string.cancel), v -> {
+            dialog.dismiss();
+        });
+    }
+
+    /**
+     * 对话框 护层计算时提示输入电缆全长
+     */
+    private void showSheathCalculateDialog() {
+        final CustomDialog dialog = new CustomDialog(this);
+        dialog.show();
+        dialog.setHintText(getString(R.string.no_length));
+        dialog.setLeftButton(getString(R.string.confirm), v -> dialog.dismiss());
+        dialog.setRightButton(getString(R.string.cancel), v -> dialog.dismiss());
+    }
+
+    /**
+     * 对话框 主绝缘计算时提示输入电缆全长
+     */
+    private void showMainCalculateDialog() {
+        final CustomDialog dialog = new CustomDialog(this);
+        dialog.show();
+        dialog.setHintText(getString(R.string.no_length));
+        dialog.setLeftButton(getString(R.string.confirm), v -> dialog.dismiss());
+        dialog.setRightButton(getString(R.string.cancel), v -> dialog.dismiss());
+    }
+
+    /**
+     * 按两次返回按键才退出程序，防止无意中按错键退出
+     */
+    private long exitTime = 0;
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_DOWN) {
+            //System.currentTimeMillis()无论何时调用，肯定大于2000
+            if ((System.currentTimeMillis() - exitTime) > 2000) {
+                Toast.makeText(getApplicationContext(), getString(R.string.exit_prompt), Toast.LENGTH_SHORT).show();
+                exitTime = System.currentTimeMillis();
+            } else {
+                finish();
+                System.exit(0);
+            }
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+    @Override
+    protected void onDestroy() {
+        currentSettingTime = 0;
+        startTime = "";
+        endTime = "";
+        try {
+            try {
+                bluetoothSocket.close();
+                if (inputStream != null) {
+                    inputStream.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        super.onDestroy();
     }
 
     private void initDate() {
@@ -715,224 +1430,6 @@ public class MainActivity extends BaseActivity {
             }
         });
     }
-
-    @Override
-    protected void onDestroy() {
-        currentSettingTime = 0;
-        startTime = "";
-        endTime = "";
-        try {
-            try {
-                bluetoothSocket.close();
-                if (inputStream != null) {
-                    inputStream.close();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        super.onDestroy();
-    }
-
-    /**
-     * 初始化标题栏
-     */
-
-    private void initToolbar() {
-//        ivSetting.setVisibility(View.VISIBLE);
-        ivTitleLogo.setVisibility(View.VISIBLE);
-        setSupportActionBar(commonTitleTb);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
-        commonTitleTb.setPadding(0, getStatusBarHeight(MainActivity.this), 0, 0);
-        commonTitleTv.setText(R.string.app_number);
-
-    }
-
-    @OnClick({R.id.ll_report_time, R.id.ll_reply_content, R.id.ll_other_filter, R.id.tv_cable_sheath, R.id.tv_cable_main,
-            R.id.btn_sheath_previous, R.id.btn_sheath_next, R.id.btn_main_previous, R.id.btn_main_next})
-    public void onViewClicked(View view) {
-        switch (view.getId()) {
-            case R.id.ll_report_time:
-                showDateDialog();
-                break;
-            case R.id.ll_reply_content:
-                showReplyStatusDialog();
-                break;
-            case R.id.ll_other_filter:
-                break;
-            case R.id.tv_cable_sheath:
-                //护层测试界面
-                modeState = false;
-                commonTitleTv.setText(R.string.btn_sheath);
-                llContainer.setVisibility(View.GONE);
-                srlRefresh.setVisibility(View.GONE);
-                llException.setVisibility(View.GONE);
-                llHome.setVisibility(View.GONE);
-                llSheath.setVisibility(View.VISIBLE);
-                llSheathTest.setVisibility(View.GONE);
-                llMain.setVisibility(View.GONE);
-                pageCoding = 1;
-                switchInterface();
-                break;
-            case R.id.tv_cable_main:
-                //主绝缘测试界面
-                modeState = true;
-                commonTitleTv.setText(R.string.btn_main);
-                llContainer.setVisibility(View.GONE);
-                srlRefresh.setVisibility(View.GONE);
-                llException.setVisibility(View.GONE);
-                llHome.setVisibility(View.GONE);
-                llSheath.setVisibility(View.GONE);
-                llMain.setVisibility(View.VISIBLE);
-                llMainTest.setVisibility(View.GONE);
-                pageCoding = 1;
-                switchInterface();
-                break;
-            case R.id.btn_sheath_previous:
-                if (pageCoding > 0) {
-                    pageCoding--;
-                    switchInterface();
-                }
-                break;
-            case R.id.btn_sheath_next:
-                if (pageCoding < 4) {
-                    pageCoding++;
-                    switchInterface();
-                }
-                break;
-            case R.id.btn_main_previous:
-                if (pageCoding > 0) {
-                    pageCoding--;
-                    switchInterface();
-                }
-                break;
-            case R.id.btn_main_next:
-                if (pageCoding < 4) {
-                    pageCoding++;
-                    switchInterface();
-                }
-                break;
-            default:
-                break;
-        }
-    }
-
-    /**
-     * 界面显示切换
-     */
-    private void switchInterface() {
-        switch (pageCoding) {
-            case 0:
-                //显示主页界面
-                commonTitleTv.setText(R.string.app_number);
-                llHome.setVisibility(View.VISIBLE);
-                if (!modeState) {
-                    llSheath.setVisibility(View.GONE);
-                } else {
-                    llMain.setVisibility(View.GONE);
-                }
-                break;
-            case 1:
-                //从主页进入 图片——测试完好相或护层
-                if (!modeState) {
-                    llSheathPicture.setVisibility(View.VISIBLE);
-                    llSheathTest.setVisibility(View.GONE);
-                    ivSheath.setImageResource(R.drawable.ic_sheath1);
-                    tvSheath.setText(R.string.line_sheath);
-                } else {
-                    llMainPicture.setVisibility(View.VISIBLE);
-                    llMainTest.setVisibility(View.GONE);
-                    ivMain.setImageResource(R.drawable.ic_main1);
-                    tvMain.setText(R.string.line_main);
-                }
-                break;
-            case 2:
-                //第一次点击下一页 显示测量电阻率
-                if (!modeState) {
-                    llSheathPicture.setVisibility(View.GONE);
-                    llSheathTest.setVisibility(View.VISIBLE);
-                    tvSheathTitle.setText(R.string.measure_resistivity);
-                    tvSheathAttention2.setVisibility(View.VISIBLE);
-                    tvSheathAttention3.setVisibility(View.VISIBLE);
-                    rlSheathTestResistance.setVisibility(View.VISIBLE);
-                    rlSheathTestResistance2.setVisibility(View.VISIBLE);
-                    rlSheathTestResistivity.setVisibility(View.VISIBLE);
-                    rlSheathTestResistivity2.setVisibility(View.VISIBLE);
-                    rlSheathDistancePercentage.setVisibility(View.GONE);
-                    rlSheathDistancePercentage2.setVisibility(View.GONE);
-                    rlSheathFaultLocation.setVisibility(View.GONE);
-                    rlSheathFaultLocation2.setVisibility(View.GONE);
-                    tvSheathCalculate.setText(R.string.btn_calculate_resistivity);
-                } else {
-                    llMainPicture.setVisibility(View.GONE);
-                    llMainTest.setVisibility(View.VISIBLE);
-                    tvMainTitle.setText(R.string.measure_resistivity);
-                    tvMainAttention2.setVisibility(View.VISIBLE);
-                    rlMainTestResistance.setVisibility(View.VISIBLE);
-                    rlMainTestResistance2.setVisibility(View.VISIBLE);
-                    rlMainTestResistivity.setVisibility(View.VISIBLE);
-                    rlMainTestResistivity2.setVisibility(View.VISIBLE);
-                    rlMainDistancePercentage.setVisibility(View.GONE);
-                    rlMainDistancePercentage2.setVisibility(View.GONE);
-                    rlMainFaultLocation.setVisibility(View.GONE);
-                    rlMainFaultLocation2.setVisibility(View.GONE);
-                    tvMainCalculate.setText(R.string.btn_calculate_resistivity);
-                }
-                break;
-            case 3:
-                //第二次点击 图片——测试故障相或护层
-                if (!modeState) {
-                    llSheathPicture.setVisibility(View.VISIBLE);
-                    llSheathTest.setVisibility(View.GONE);
-                    ivSheath.setImageResource(R.drawable.ic_sheath2);
-                    tvSheath.setText(R.string.line_sheath2);
-                } else {
-                    llMainPicture.setVisibility(View.VISIBLE);
-                    llMainTest.setVisibility(View.GONE);
-                    ivMain.setImageResource(R.drawable.ic_main2);
-                    tvMain.setText(R.string.line_main2);
-                }
-                break;
-            case 4:
-                //第三次点击 给出故障距离
-                if (!modeState) {
-                    llSheathPicture.setVisibility(View.GONE);
-                    llSheathTest.setVisibility(View.VISIBLE);
-                    tvSheathTitle.setText(R.string.fault_location);
-                    tvSheathAttention2.setVisibility(View.GONE);
-                    tvSheathAttention3.setVisibility(View.GONE);
-                    rlSheathTestResistance.setVisibility(View.GONE);
-                    rlSheathTestResistance2.setVisibility(View.GONE);
-                    rlSheathTestResistivity.setVisibility(View.GONE);
-                    rlSheathTestResistivity2.setVisibility(View.GONE);
-                    rlSheathDistancePercentage.setVisibility(View.VISIBLE);
-                    rlSheathDistancePercentage2.setVisibility(View.VISIBLE);
-                    rlSheathFaultLocation.setVisibility(View.VISIBLE);
-                    rlSheathFaultLocation2.setVisibility(View.VISIBLE);
-                    tvSheathCalculate.setText(R.string.btn_calculate_distance);
-                } else {
-                    llMainPicture.setVisibility(View.GONE);
-                    llMainTest.setVisibility(View.VISIBLE);
-                    tvMainTitle.setText(R.string.fault_location);
-                    tvMainAttention2.setVisibility(View.GONE);
-                    rlMainTestResistance.setVisibility(View.GONE);
-                    rlMainTestResistance2.setVisibility(View.GONE);
-                    rlMainTestResistivity.setVisibility(View.GONE);
-                    rlMainTestResistivity2.setVisibility(View.GONE);
-                    rlMainDistancePercentage.setVisibility(View.VISIBLE);
-                    rlMainDistancePercentage2.setVisibility(View.VISIBLE);
-                    rlMainFaultLocation.setVisibility(View.VISIBLE);
-                    rlMainFaultLocation2.setVisibility(View.VISIBLE);
-                    tvMainCalculate.setText(R.string.btn_calculate_distance);
-                }
-                break;
-            default:
-                break;
-        }
-    }
-
 
     private void initReplyPopupWindow() {
         replyView = LayoutInflater.from(MainActivity.this).inflate(R.layout.dialog_select_reply_content_layout, null);
@@ -1491,27 +1988,6 @@ public class MainActivity extends BaseActivity {
 
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    /**
-     * 按两次返回按键才退出程序，防止无意中按错键退出
-     */
-    private long exitTime = 0;
-
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_DOWN) {
-            //System.currentTimeMillis()无论何时调用，肯定大于2000
-            if ((System.currentTimeMillis() - exitTime) > 2000) {
-                Toast.makeText(getApplicationContext(), getString(R.string.exit_prompt), Toast.LENGTH_SHORT).show();
-                exitTime = System.currentTimeMillis();
-            } else {
-                finish();
-                System.exit(0);
-            }
-            return true;
-        }
-        return super.onKeyDown(keyCode, event);
     }
 
 }

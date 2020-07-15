@@ -211,7 +211,8 @@
             android:layout_height="match_parent"
             android:layout_centerInParent="true"
             android:background="@drawable/bg_assist_list"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            tools:visibility="gone">
 
             <!--接线图片-->
             <LinearLayout
@@ -348,6 +349,7 @@
                                 android:orientation="vertical">
 
                                 <RelativeLayout
+                                    android:id="@+id/rl_sheath_test_voltage"
                                     android:layout_width="wrap_content"
                                     android:layout_height="match_parent"
                                     android:layout_weight="1">
@@ -362,6 +364,7 @@
                                 </RelativeLayout>
 
                                 <RelativeLayout
+                                    android:id="@+id/rl_sheath_test_current"
                                     android:layout_width="wrap_content"
                                     android:layout_height="match_parent"
                                     android:layout_weight="1">
@@ -407,6 +410,7 @@
                                 </RelativeLayout>
 
                                 <RelativeLayout
+                                    android:id="@+id/rl_sheath_length"
                                     android:layout_width="wrap_content"
                                     android:layout_height="match_parent"
                                     android:layout_weight="1">
@@ -457,6 +461,7 @@
                                 android:orientation="vertical">
 
                                 <RelativeLayout
+                                    android:id="@+id/rl_sheath_test_voltage2"
                                     android:layout_width="wrap_content"
                                     android:layout_height="match_parent"
                                     android:layout_weight="1">
@@ -494,6 +499,7 @@
                                 </RelativeLayout>
 
                                 <RelativeLayout
+                                    android:id="@+id/rl_sheath_test_current2"
                                     android:layout_width="wrap_content"
                                     android:layout_height="match_parent"
                                     android:layout_weight="1">
@@ -608,6 +614,7 @@
                                 </RelativeLayout>
 
                                 <RelativeLayout
+                                    android:id="@+id/rl_sheath_length2"
                                     android:layout_width="wrap_content"
                                     android:layout_height="match_parent"
                                     android:layout_weight="1">
@@ -654,23 +661,26 @@
                                     android:layout_height="match_parent"
                                     android:layout_weight="1">
 
-                                    <TextView
-                                        android:id="@+id/tv_sheath_resistivity"
+                                    <EditText
+                                        android:id="@+id/et_sheath_resistivity"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:layout_marginStart="@dimen/size_10"
                                         android:layout_marginLeft="@dimen/size_10"
                                         android:background="@null"
+                                        android:cursorVisible="true"
+                                        android:inputType="number|numberDecimal"
                                         android:minWidth="@dimen/size_120"
                                         android:text=""
                                         android:textColor="@color/gray4"
+                                        android:textCursorDrawable="@color/blue"
                                         android:textSize="@dimen/sp_17" />
 
                                     <TextView
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
-                                        android:layout_alignEnd="@id/tv_sheath_resistivity"
-                                        android:layout_alignRight="@id/tv_sheath_resistivity"
+                                        android:layout_alignEnd="@id/et_sheath_resistivity"
+                                        android:layout_alignRight="@id/et_sheath_resistivity"
                                         android:text="@string/resistivity"
                                         android:textColor="@color/gray4"
                                         android:textSize="@dimen/sp_17" />
@@ -678,11 +688,11 @@
                                     <View
                                         android:layout_width="wrap_content"
                                         android:layout_height="@dimen/size_0.5"
-                                        android:layout_below="@id/tv_sheath_resistivity"
-                                        android:layout_alignStart="@id/tv_sheath_resistivity"
-                                        android:layout_alignLeft="@id/tv_sheath_resistivity"
-                                        android:layout_alignEnd="@id/tv_sheath_resistivity"
-                                        android:layout_alignRight="@id/tv_sheath_resistivity"
+                                        android:layout_below="@id/et_sheath_resistivity"
+                                        android:layout_alignStart="@id/et_sheath_resistivity"
+                                        android:layout_alignLeft="@id/et_sheath_resistivity"
+                                        android:layout_alignEnd="@id/et_sheath_resistivity"
+                                        android:layout_alignRight="@id/et_sheath_resistivity"
                                         android:background="@color/black" />
 
                                 </RelativeLayout>
@@ -729,15 +739,15 @@
                         </LinearLayout>
 
                         <TextView
-                            android:id="@+id/tv_sheath_calculate"
+                            android:id="@+id/btn_sheath"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:gravity="center"
-                            android:padding="@dimen/size_5"
                             android:layout_marginTop="@dimen/size_15"
                             android:layout_marginBottom="@dimen/size_10"
                             android:background="@drawable/shape_solid_btn"
-                            android:text="@string/btn_calculate_resistivity"
+                            android:gravity="center"
+                            android:padding="@dimen/size_5"
+                            android:text="@string/manual_input_resistivity"
                             android:textColor="@color/white"
                             android:textSize="@dimen/sp_17" />
                     </LinearLayout>
@@ -748,16 +758,16 @@
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
-                android:layout_weight="1"
+                android:layout_gravity="center"
                 android:layout_marginBottom="@dimen/size_10"
-                android:layout_gravity="center" >
+                android:layout_weight="1">
 
                 <Button
                     android:id="@+id/btn_sheath_previous"
                     android:layout_width="@dimen/size_120"
                     android:layout_height="wrap_content"
-                    android:text="@string/previous"
                     android:background="@drawable/bg_login_button"
+                    android:text="@string/previous"
                     android:textColor="@color/white"
                     android:textSize="@dimen/sp_20" />
 
@@ -766,8 +776,8 @@
                     android:layout_width="@dimen/size_120"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="@dimen/size_120"
-                    android:text="@string/next"
                     android:background="@drawable/bg_login_button"
+                    android:text="@string/next"
                     android:textColor="@color/white"
                     android:textSize="@dimen/sp_20" />
             </LinearLayout>
@@ -781,16 +791,17 @@
             android:layout_centerInParent="true"
             android:background="@drawable/bg_assist_list"
             android:orientation="vertical"
-            tools:visibility="gone">
+            tools:visibility="visible">
 
             <!--接线图片-->
             <LinearLayout
                 android:id="@+id/ll_main_picture"
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
-                android:layout_weight="10"
                 android:layout_gravity="center"
-                android:orientation="vertical">
+                android:layout_weight="10"
+                android:orientation="vertical"
+                tools:visibility="gone">
 
                 <ImageView
                     android:id="@+id/iv_main"
@@ -804,12 +815,12 @@
                     android:id="@+id/tv_main"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/size_10"
-                    android:layout_marginLeft="@dimen/size_15"
-                    android:layout_marginRight="@dimen/size_10"
-                    android:layout_marginStart="@dimen/size_15"
-                    android:layout_marginEnd="@dimen/size_10"
                     android:layout_gravity="center_horizontal"
+                    android:layout_marginStart="@dimen/size_15"
+                    android:layout_marginLeft="@dimen/size_15"
+                    android:layout_marginTop="@dimen/size_10"
+                    android:layout_marginEnd="@dimen/size_10"
+                    android:layout_marginRight="@dimen/size_10"
                     android:text="@string/line_note"
                     android:textColor="@color/gray5"
                     android:textSize="@dimen/sp_17" />
@@ -820,8 +831,8 @@
                 android:id="@+id/ll_main_test"
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
-                android:layout_weight="10"
                 android:layout_gravity="center"
+                android:layout_weight="10"
                 android:orientation="vertical">
 
                 <!--标题-->
@@ -902,6 +913,7 @@
                                 android:orientation="vertical">
 
                                 <RelativeLayout
+                                    android:id="@+id/rl_main_test_voltage"
                                     android:layout_width="wrap_content"
                                     android:layout_height="match_parent"
                                     android:layout_weight="1">
@@ -916,6 +928,7 @@
                                 </RelativeLayout>
 
                                 <RelativeLayout
+                                    android:id="@+id/rl_main_test_current"
                                     android:layout_width="wrap_content"
                                     android:layout_height="match_parent"
                                     android:layout_weight="1">
@@ -961,6 +974,7 @@
                                 </RelativeLayout>
 
                                 <RelativeLayout
+                                    android:id="@+id/rl_main_length"
                                     android:layout_width="wrap_content"
                                     android:layout_height="match_parent"
                                     android:layout_weight="1">
@@ -1011,6 +1025,7 @@
                                 android:orientation="vertical">
 
                                 <RelativeLayout
+                                    android:id="@+id/rl_main_test_voltage2"
                                     android:layout_width="wrap_content"
                                     android:layout_height="match_parent"
                                     android:layout_weight="1">
@@ -1020,34 +1035,35 @@
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:layout_marginStart="@dimen/size_10"
+                                        android:layout_marginLeft="@dimen/size_10"
                                         android:background="@null"
                                         android:minWidth="@dimen/size_120"
                                         android:text=""
                                         android:textColor="@color/red"
-                                        android:textSize="@dimen/sp_17"
-                                        android:layout_marginLeft="@dimen/size_10" />
+                                        android:textSize="@dimen/sp_17" />
 
                                     <TextView
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:layout_alignEnd="@id/tv_main_test_voltage"
+                                        android:layout_alignRight="@id/tv_main_test_voltage"
                                         android:text="@string/voltage"
                                         android:textColor="@color/red"
-                                        android:textSize="@dimen/sp_17"
-                                        android:layout_alignRight="@id/tv_main_test_voltage" />
+                                        android:textSize="@dimen/sp_17" />
 
                                     <View
                                         android:layout_width="wrap_content"
                                         android:layout_height="@dimen/size_0.5"
                                         android:layout_below="@id/tv_main_test_voltage"
                                         android:layout_alignStart="@id/tv_main_test_voltage"
+                                        android:layout_alignLeft="@id/tv_main_test_voltage"
                                         android:layout_alignEnd="@id/tv_main_test_voltage"
-                                        android:background="@color/black"
                                         android:layout_alignRight="@id/tv_main_test_voltage"
-                                        android:layout_alignLeft="@id/tv_main_test_voltage" />
+                                        android:background="@color/black" />
                                 </RelativeLayout>
 
                                 <RelativeLayout
+                                    android:id="@+id/rl_main_test_current2"
                                     android:layout_width="wrap_content"
                                     android:layout_height="match_parent"
                                     android:layout_weight="1">
@@ -1057,31 +1073,31 @@
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:layout_marginStart="@dimen/size_10"
+                                        android:layout_marginLeft="@dimen/size_10"
                                         android:background="@null"
                                         android:minWidth="@dimen/size_120"
                                         android:text=""
                                         android:textColor="@color/red"
-                                        android:textSize="@dimen/sp_17"
-                                        android:layout_marginLeft="@dimen/size_10" />
+                                        android:textSize="@dimen/sp_17" />
 
                                     <TextView
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:layout_alignEnd="@id/tv_main_test_current"
+                                        android:layout_alignRight="@id/tv_main_test_current"
                                         android:text="@string/current"
                                         android:textColor="@color/red"
-                                        android:textSize="@dimen/sp_17"
-                                        android:layout_alignRight="@id/tv_main_test_current" />
+                                        android:textSize="@dimen/sp_17" />
 
                                     <View
                                         android:layout_width="wrap_content"
                                         android:layout_height="@dimen/size_0.5"
                                         android:layout_below="@id/tv_main_test_current"
                                         android:layout_alignStart="@id/tv_main_test_current"
-                                        android:layout_alignEnd="@id/tv_main_test_current"
-                                        android:background="@color/black"
                                         android:layout_alignLeft="@id/tv_main_test_current"
-                                        android:layout_alignRight="@id/tv_main_test_current" />
+                                        android:layout_alignEnd="@id/tv_main_test_current"
+                                        android:layout_alignRight="@id/tv_main_test_current"
+                                        android:background="@color/black" />
                                 </RelativeLayout>
 
                                 <RelativeLayout
@@ -1095,31 +1111,31 @@
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:layout_marginStart="@dimen/size_10"
+                                        android:layout_marginLeft="@dimen/size_10"
                                         android:background="@null"
                                         android:minWidth="@dimen/size_120"
                                         android:text=""
                                         android:textColor="@color/blue"
-                                        android:textSize="@dimen/sp_17"
-                                        android:layout_marginLeft="@dimen/size_10" />
+                                        android:textSize="@dimen/sp_17" />
 
                                     <TextView
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:layout_alignEnd="@id/tv_main_resistance"
+                                        android:layout_alignRight="@id/tv_main_resistance"
                                         android:text="@string/resistance"
                                         android:textColor="@color/blue"
-                                        android:textSize="@dimen/sp_17"
-                                        android:layout_alignRight="@id/tv_main_resistance" />
+                                        android:textSize="@dimen/sp_17" />
 
                                     <View
                                         android:layout_width="wrap_content"
                                         android:layout_height="@dimen/size_0.5"
                                         android:layout_below="@id/tv_main_resistance"
                                         android:layout_alignStart="@id/tv_main_resistance"
-                                        android:layout_alignEnd="@id/tv_main_resistance"
-                                        android:background="@color/black"
                                         android:layout_alignLeft="@id/tv_main_resistance"
-                                        android:layout_alignRight="@id/tv_main_resistance" />
+                                        android:layout_alignEnd="@id/tv_main_resistance"
+                                        android:layout_alignRight="@id/tv_main_resistance"
+                                        android:background="@color/black" />
                                 </RelativeLayout>
 
                                 <RelativeLayout
@@ -1133,35 +1149,36 @@
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:layout_marginStart="@dimen/size_10"
+                                        android:layout_marginLeft="@dimen/size_10"
                                         android:background="@null"
                                         android:minWidth="@dimen/size_120"
                                         android:singleLine="true"
                                         android:text=""
                                         android:textColor="@color/blue"
-                                        android:textSize="@dimen/sp_17"
-                                        android:layout_marginLeft="@dimen/size_10" />
+                                        android:textSize="@dimen/sp_17" />
 
                                     <TextView
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:layout_alignEnd="@id/tv_main_percentage"
+                                        android:layout_alignRight="@id/tv_main_percentage"
                                         android:text="@string/percentage"
                                         android:textColor="@color/blue"
-                                        android:textSize="@dimen/sp_17"
-                                        android:layout_alignRight="@id/tv_main_percentage" />
+                                        android:textSize="@dimen/sp_17" />
 
                                     <View
                                         android:layout_width="wrap_content"
                                         android:layout_height="@dimen/size_0.5"
                                         android:layout_below="@id/tv_main_percentage"
                                         android:layout_alignStart="@id/tv_main_percentage"
-                                        android:layout_alignEnd="@id/tv_main_percentage"
-                                        android:background="@color/black"
                                         android:layout_alignLeft="@id/tv_main_percentage"
-                                        android:layout_alignRight="@id/tv_main_percentage" />
+                                        android:layout_alignEnd="@id/tv_main_percentage"
+                                        android:layout_alignRight="@id/tv_main_percentage"
+                                        android:background="@color/black" />
                                 </RelativeLayout>
 
                                 <RelativeLayout
+                                    android:id="@+id/rl_main_length2"
                                     android:layout_width="wrap_content"
                                     android:layout_height="match_parent"
                                     android:layout_weight="1">
@@ -1171,35 +1188,35 @@
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:layout_marginStart="@dimen/size_10"
+                                        android:layout_marginLeft="@dimen/size_10"
                                         android:background="@null"
-                                        android:inputType="number|numberDecimal"
                                         android:cursorVisible="true"
-                                        android:textCursorDrawable = "@color/blue"
-                                        android:minWidth="@dimen/size_120"
                                         android:imeOptions="actionDone"
+                                        android:inputType="number|numberDecimal"
+                                        android:minWidth="@dimen/size_120"
                                         android:text=""
                                         android:textColor="@color/gray4"
-                                        android:textSize="@dimen/sp_17"
-                                        android:layout_marginLeft="@dimen/size_10" />
+                                        android:textCursorDrawable="@color/blue"
+                                        android:textSize="@dimen/sp_17" />
 
                                     <TextView
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:layout_alignEnd="@id/et_main_length"
+                                        android:layout_alignRight="@id/et_main_length"
                                         android:text="@string/meter"
                                         android:textColor="@color/gray4"
-                                        android:textSize="@dimen/sp_17"
-                                        android:layout_alignRight="@id/et_main_length" />
+                                        android:textSize="@dimen/sp_17" />
 
                                     <View
                                         android:layout_width="wrap_content"
                                         android:layout_height="@dimen/size_0.5"
                                         android:layout_below="@id/et_main_length"
                                         android:layout_alignStart="@id/et_main_length"
-                                        android:layout_alignEnd="@id/et_main_length"
-                                        android:background="@color/black"
                                         android:layout_alignLeft="@id/et_main_length"
-                                        android:layout_alignRight="@id/et_main_length" />
+                                        android:layout_alignEnd="@id/et_main_length"
+                                        android:layout_alignRight="@id/et_main_length"
+                                        android:background="@color/black" />
 
                                 </RelativeLayout>
 
@@ -1209,36 +1226,40 @@
                                     android:layout_height="match_parent"
                                     android:layout_weight="1">
 
-                                    <TextView
-                                        android:id="@+id/tv_main_resistivity"
+                                    <EditText
+                                        android:id="@+id/et_main_resistivity"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:layout_marginStart="@dimen/size_10"
+                                        android:layout_marginLeft="@dimen/size_10"
                                         android:background="@null"
+                                        android:cursorVisible="true"
+                                        android:imeOptions="actionDone"
+                                        android:inputType="number|numberDecimal"
                                         android:minWidth="@dimen/size_120"
                                         android:text=""
                                         android:textColor="@color/gray4"
-                                        android:textSize="@dimen/sp_17"
-                                        android:layout_marginLeft="@dimen/size_10" />
+                                        android:textCursorDrawable="@color/blue"
+                                        android:textSize="@dimen/sp_17" />
 
                                     <TextView
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
-                                        android:layout_alignEnd="@id/tv_main_resistivity"
+                                        android:layout_alignEnd="@id/et_main_resistivity"
+                                        android:layout_alignRight="@id/et_main_resistivity"
                                         android:text="@string/resistivity"
                                         android:textColor="@color/gray4"
-                                        android:textSize="@dimen/sp_17"
-                                        android:layout_alignRight="@id/tv_main_resistivity" />
+                                        android:textSize="@dimen/sp_17" />
 
                                     <View
                                         android:layout_width="wrap_content"
                                         android:layout_height="@dimen/size_0.5"
-                                        android:layout_below="@id/tv_main_resistivity"
-                                        android:layout_alignStart="@id/tv_main_resistivity"
-                                        android:layout_alignEnd="@id/tv_main_resistivity"
-                                        android:background="@color/black"
-                                        android:layout_alignLeft="@id/tv_main_resistivity"
-                                        android:layout_alignRight="@id/tv_main_resistivity" />
+                                        android:layout_below="@id/et_main_resistivity"
+                                        android:layout_alignStart="@id/et_main_resistivity"
+                                        android:layout_alignLeft="@id/et_main_resistivity"
+                                        android:layout_alignEnd="@id/et_main_resistivity"
+                                        android:layout_alignRight="@id/et_main_resistivity"
+                                        android:background="@color/black" />
 
                                 </RelativeLayout>
 
@@ -1253,46 +1274,46 @@
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:layout_marginStart="@dimen/size_10"
+                                        android:layout_marginLeft="@dimen/size_10"
                                         android:background="@null"
                                         android:minWidth="@dimen/size_120"
                                         android:singleLine="true"
                                         android:text=""
                                         android:textColor="@color/gray4"
-                                        android:textSize="@dimen/sp_17"
-                                        android:layout_marginLeft="@dimen/size_10" />
+                                        android:textSize="@dimen/sp_17" />
 
                                     <TextView
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:layout_alignEnd="@id/tv_main_fault_location"
+                                        android:layout_alignRight="@id/tv_main_fault_location"
                                         android:text="@string/meter"
                                         android:textColor="@color/gray4"
-                                        android:textSize="@dimen/sp_17"
-                                        android:layout_alignRight="@id/tv_main_fault_location" />
+                                        android:textSize="@dimen/sp_17" />
 
                                     <View
                                         android:layout_width="wrap_content"
                                         android:layout_height="@dimen/size_0.5"
                                         android:layout_below="@id/tv_main_fault_location"
                                         android:layout_alignStart="@id/tv_main_fault_location"
-                                        android:layout_alignEnd="@id/tv_main_fault_location"
-                                        android:background="@color/black"
                                         android:layout_alignLeft="@id/tv_main_fault_location"
-                                        android:layout_alignRight="@id/tv_main_fault_location" />
+                                        android:layout_alignEnd="@id/tv_main_fault_location"
+                                        android:layout_alignRight="@id/tv_main_fault_location"
+                                        android:background="@color/black" />
                                 </RelativeLayout>
                             </LinearLayout>
                         </LinearLayout>
 
                         <TextView
-                            android:id="@+id/tv_main_calculate"
+                            android:id="@+id/btn_main"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:gravity="center"
-                            android:padding="@dimen/size_5"
                             android:layout_marginTop="@dimen/size_15"
                             android:layout_marginBottom="@dimen/size_10"
                             android:background="@drawable/shape_solid_btn"
-                            android:text="@string/btn_calculate_resistivity"
+                            android:gravity="center"
+                            android:padding="@dimen/size_5"
+                            android:text="@string/manual_input_resistivity"
                             android:textColor="@color/white"
                             android:textSize="@dimen/sp_17" />
                     </LinearLayout>

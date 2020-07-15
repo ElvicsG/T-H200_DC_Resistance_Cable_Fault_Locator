@@ -54,6 +54,9 @@ public class CustomDialog extends Dialog {
         lp.width = (int) (wm.getDefaultDisplay().getWidth() * 0.65);
 
         win.setAttributes(lp);
+        //禁止外部点击和返回按钮响应
+        setCanceledOnTouchOutside(false);
+        setCancelable(false);
 
     }
 

@@ -96,6 +96,7 @@
     <string name="line_main2">Connection: \nTake good phase as the auxiliary line, select fault phase for test; \nThe two lines are short circuited at the end!</string>
     <string name="previous">PRE.</string>
     <string name="next">Next</string>
+    <string name="end">End</string>
     <string name="measure_resistivity">Measure Resistivity</string>
     <string name="attention">Attention:</string>
     <string name="txtAttention1">1.Increase DC voltage slowly;</string>
@@ -104,7 +105,7 @@
     <string name="txtAttention4">3.Cable reference resistivity 0.058Ω/km.</string>
     <string name="fault_location">Fault Location</string>
     <string name="btn_save">SAVE</string>
-    <string name="btn_calculate_resistivity">Calculate resistivity</string>
+    <string name="manual_input_resistivity">Manual input resistivity</string>
     <string name="btn_calculate_distance">Calculate distance</string>
     <string name="voltage">μV</string>
     <string name="current">mA</string>
@@ -120,7 +121,7 @@
     <string name="fault_resistance">Fault Section Resistance:</string>
     <string name="fault_location_l">Fault Location:</string>
     <string name="distance_percentage">Distance Percentage:</string>
-    <string name="exit_prompt">Please press again to exit!</string>
+    <string name="exit_prompt">Please press again to exit the software!</string>
     <string name="connecting_wait">Connecting, please wait…</string>
     <string name="find_bluetooth_device">Find Bluetooth device</string>
     <string name="does_not_find_device">The machine does not find Bluetooth hardware or drivers</string>
@@ -141,5 +142,13 @@
     <string name="select_the_device_to_connect_to">Select the device to connect to</string>
     <string name="can_not_get_input_stream_via_Bluetooth_socket">Can not get input stream via Bluetooth socket,
         please reopen the application to connect</string>
+    <string name="no_resistivity">No resistivity values, are you sure to proceed to the next step?
+        \n(You can obtain resistivity by entering the cable length)</string>
+    <string name="no_length">Please input the cable length first!</string>
+    <string name="exit_confirmation">Are you sure you want to end this test?</string>
+    <string name="resistivity_note">Too low test current will lead to inaccurate results, are you sure to proceed to the next step?</string>
+    <string name="btn_input">Save</string>
+    <string name="cancel_manual">Cancel manual input</string>
+    <string name="no_resistivity_manual">The resistivity cannot be 0 when input manually!</string>
 
 </resources>
