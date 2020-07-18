@@ -339,6 +339,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:layout_marginTop="@dimen/size_30"
+                            android:layout_marginBottom="@dimen/size_30"
                             android:gravity="center"
                             android:orientation="horizontal">
 
@@ -903,6 +904,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:layout_marginTop="@dimen/size_30"
+                            android:layout_marginBottom="@dimen/size_30"
                             android:gravity="center"
                             android:orientation="horizontal">
 

@@ -103,5 +103,6 @@ public class BaseActivity extends AppCompatActivity {
 //GC20200703    去网络断开提示
 //GC20200707    蓝牙搜索列表添加
 //GC20200709    蓝牙数据处理
+//GC20200717    数字四舍五入显示优化
 //G?
 //GT

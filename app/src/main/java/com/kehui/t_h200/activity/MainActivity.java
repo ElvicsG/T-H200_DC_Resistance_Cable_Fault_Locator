@@ -44,6 +44,7 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.kehui.t_h200.R;
+import com.kehui.t_h200.Word;
 import com.kehui.t_h200.adapter.AssistListAdapter;
 import com.kehui.t_h200.app.App;
 import com.kehui.t_h200.app.Constants;
@@ -67,15 +68,21 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -95,6 +102,10 @@ import retrofit2.converter.scalars.ScalarsConverterFactory;
 public class MainActivity extends BaseActivity {
 
     private static final String TAG = "MainActivity";
+
+    public static final String tmpFile = "file";
+    public static final String tmpFileName = "tmpReport.doc";
+    public static final String saveFileName = "Report";
 
     @BindView(R.id.iv_title_logo)
     ImageView ivTitleLogo;
@@ -380,10 +391,10 @@ public class MainActivity extends BaseActivity {
         screenHeight = wm.getDefaultDisplay().getHeight();
         initToolbar();
 
-        initReplyPopupWindow();
+        /*initReplyPopupWindow();
         initDatePopupWindow();
         initDate();
-        initView();
+        initView();*/
 
         //蓝牙数据处理    //GC20200709
         initData();
@@ -662,7 +673,6 @@ public class MainActivity extends BaseActivity {
         int valueI;
         double voltage;
         double current;
-        double L1;
 
         valueU = data[2] * 256 + data[3];
         valueI = data[4] * 256 + data[5];
@@ -673,9 +683,6 @@ public class MainActivity extends BaseActivity {
         currentSum = currentSum + valueI * 64. / 5200.;
         j++;
         if (j == 10) {
-            //voltage = 电压值ADU/ 0.1979619895313889/1.97199650112410（uV）
-            //current = 电流值ADI/1.0151*6.35175421291293*1.0102（mA)
-            //resistance = 电压U1/电流I1/100(m Ω)
             //电压平均值
             voltage = voltageSum / 10;
             //电流平均值     //有系数 0.98;
@@ -684,13 +691,9 @@ public class MainActivity extends BaseActivity {
                 if (!noChange) {
                     U1 = voltage;
                     I1 = current;
-                    if (current != 0.00) {
+                    if (current >= 0.005) {
+                        //GC20200717
                         resistance = U1 / I1;
-                        Log.e(TAG, "voltageSum = " + voltageSum);
-                        Log.e(TAG, "voltageSum = " + voltageSum);
-                        Log.e(TAG, "U1 = " + U1);
-                        Log.e(TAG, "I1 = " + I1);
-                        Log.e(TAG, "resistance = " + resistance);
                     } else {
                         resistance = 0.0;
                     }
@@ -699,28 +702,23 @@ public class MainActivity extends BaseActivity {
             } else if (pageCoding == 4) {
                 U2 = voltage;
                 I2 = current;
-                if (current != 0.00 && !clickManual) {
+                if (current >= 0.005 && !clickManual) {
+                    //GC20200717
                     if (resistance != 0.0) {
                         percentage = (U2 / I2) / resistance * 100;
+                    }else {
+                        percentage = 0.00;
                     }
-                    Log.e(TAG, "percentage = " + percentage);
                 } else {
                     percentage = 0.00;
                 }
             }
             handle.sendEmptyMessage(UI_REFRESH);
 
-            //故障距离L2 = 电压值U2*100/电流值I2/ 电阻率ρ（m）
-            double L2 = voltage / current / resistivity;
-            //取整
-            L2 = Math.round(L2 + 0.5);
-//            txtView.setText(String.format(" %.0f ", L2));
-
             //重置
             voltageSum = 0.0;
             currentSum = 0.00;
             j = 0;
-
         }
 
     }
@@ -781,7 +779,9 @@ public class MainActivity extends BaseActivity {
                         //测量电阻率界面
                         if ( etSheathResistivity.getText().toString().trim().isEmpty()
                                 || etSheathResistivity.getText().toString().trim().equals("0")
-                                || etSheathResistivity.getText().toString().trim().equals("0.0000") ) {
+                                || etSheathResistivity.getText().toString().trim().equals("0.0")
+                                || etSheathResistivity.getText().toString().trim().equals("0.00")
+                                || etSheathResistivity.getText().toString().trim().equals("0.000") ) {
                             if (clickManual){
                                 showManualNoResistivityDialog();
                             } else {
@@ -814,8 +814,11 @@ public class MainActivity extends BaseActivity {
                             resistivity = Double.parseDouble(etMainResistivity.getText().toString());
                         }
                         if (etMainResistivity.getText().toString().trim().isEmpty()
-                                || etMainResistivity.getText().toString().trim().equals("0")
-                                || etMainResistivity.getText().toString().trim().equals("0.0000") ) {
+                                || resistivity == 0 ) {
+//                                || etMainResistivity.getText().toString().trim().equals("0")
+//                                || etSheathResistivity.getText().toString().trim().equals("0.0")
+//                                || etSheathResistivity.getText().toString().trim().equals("0.00")
+//                                || etSheathResistivity.getText().toString().trim().equals("0.000") ) {
                             if (clickManual){
                                 showManualNoResistivityDialog();
                             } else {
@@ -868,11 +871,7 @@ public class MainActivity extends BaseActivity {
                     }
 
                 } else if (pageCoding == 4) {
-//                    //故障距离L2 = 电压值U2*100/电流值I2/ 电阻率ρ（m）
-//                    double L2 = voltage / current / resistivity;
-//                    //取整
-//                    L2 = Math.round(L2 + 0.5);
-//                    //            txtView.setText(String.format(" %.0f ", L2));
+                    generateReport();
                 }
                 break;
             case R.id.btn_main:
@@ -928,11 +927,13 @@ public class MainActivity extends BaseActivity {
                     etSheathLength.setText("");
                     etSheathResistivity.setText("");
                     tvSheathFaultLocation.setText("");
+                    btnSheath.setVisibility(View.VISIBLE);
                 } else {
                     llMain.setVisibility(View.GONE);
                     etMainLength.setText("");
                     etMainResistivity.setText("");
                     tvMainFaultLocation.setText("");
+                    btnMain.setVisibility(View.VISIBLE);
                 }
                 //电阻率界面数据可以刷新
                 noChange = false;
@@ -1044,12 +1045,14 @@ public class MainActivity extends BaseActivity {
                     ivSheath.setImageResource(R.drawable.ic_sheath2);
                     tvSheath.setText(R.string.line_sheath2);
                     btnSheathNext.setText(R.string.next);
+                    btnSheath.setVisibility(View.VISIBLE);
                 } else {
                     llMainPicture.setVisibility(View.VISIBLE);
                     llMainTest.setVisibility(View.GONE);
                     ivMain.setImageResource(R.drawable.ic_main2);
                     tvMain.setText(R.string.line_main2);
                     btnMainNext.setText(R.string.next);
+                    btnMain.setVisibility(View.VISIBLE);
                 }
                 //电阻率界面数据不可以刷新
                 noChange = true;
@@ -1085,7 +1088,8 @@ public class MainActivity extends BaseActivity {
                     }
                     rlSheathFaultLocation.setVisibility(View.VISIBLE);
                     rlSheathFaultLocation2.setVisibility(View.VISIBLE);
-                    btnSheath.setText(R.string.btn_calculate_distance);
+//                    btnSheath.setText(R.string.btn_calculate_distance);
+                    btnSheath.setVisibility(View.GONE);
                 } else {
                     llMainPicture.setVisibility(View.GONE);
                     llMainTest.setVisibility(View.VISIBLE);
@@ -1114,7 +1118,8 @@ public class MainActivity extends BaseActivity {
                     }
                     rlMainFaultLocation.setVisibility(View.VISIBLE);
                     rlMainFaultLocation2.setVisibility(View.VISIBLE);
-                    btnMain.setText(R.string.btn_calculate_distance);
+//                    btnMain.setText(R.string.btn_calculate_distance);
+                    btnMain.setVisibility(View.GONE);
                 }
                 break;
             default:
@@ -1142,13 +1147,14 @@ public class MainActivity extends BaseActivity {
                         if (!etSheathLength.getText().toString().trim().isEmpty()) {
                             //计算电阻率
                             cableLength = Double.parseDouble(etSheathLength.getText().toString());
-                            if (cableLength != 0.0) {
+                            if ( (cableLength != 0.0) && (resistance != 0.0) ) {
                                 resistivity = U1 / I1 / cableLength;
+                                //电阻率：3位小数
+                                etSheathResistivity.setText(String.format("%.3f", resistivity));
                             } else {
-                                resistivity = 0.0000;
+                                resistivity = 0.000;
+                                etSheathResistivity.setText("");
                             }
-                            //电阻率：4位小数
-                            etSheathResistivity.setText(String.format("%.4f", resistivity));
                         } else {
                             etSheathResistivity.setText("");
                         }
@@ -1159,13 +1165,14 @@ public class MainActivity extends BaseActivity {
                         if (!etMainLength.getText().toString().trim().isEmpty()) {
                             //计算电阻率
                             cableLength = Double.parseDouble(etMainLength.getText().toString());
-                            if (cableLength != 0.0) {
+                            if ( (cableLength != 0.0) && (resistance != 0.0) ) {
                                 resistivity = U1 / I1 / cableLength;
+                                //电阻率：3位小数
+                                etMainResistivity.setText(String.format("%.3f", resistivity));
                             } else {
-                                resistivity = 0.0000;
+                                resistivity = 0.000;
+                                etMainResistivity.setText("");
                             }
-                            //电阻率：4位小数
-                            etMainResistivity.setText(String.format("%.4f", resistivity));
                         } else {
                             etMainResistivity.setText("");
                         }
@@ -1184,6 +1191,8 @@ public class MainActivity extends BaseActivity {
                     if (!clickManual) {
                         tvSheathPercentage.setText(String.format("%.2f", percentage));
                         if (!etSheathLength.getText().toString().trim().isEmpty()) {
+                            //计算故障距离
+                            cableLength = Double.parseDouble(etSheathLength.getText().toString());
                             faultLocation = cableLength * percentage / 100;
                             tvSheathFaultLocation.setText(String.format(" %.1f ", faultLocation));
                         } else {
@@ -1191,7 +1200,8 @@ public class MainActivity extends BaseActivity {
                         }
 
                     } else {
-                        if (I2 != 0.00) {
+                        if (I2 >= 0.005) {
+                            //数字四舍五入显示优化 //GC20200717
                             faultLocation = U2 / I2 / resistivity;
                             tvSheathFaultLocation.setText(String.format(" %.1f ", faultLocation));
                         } else {
@@ -1201,12 +1211,25 @@ public class MainActivity extends BaseActivity {
                 } else {
                     tvMainTestVoltage.setText(String.format("%.1f", U2));
                     tvMainTestCurrent.setText(String.format("%.2f", I2));
-                    tvMainPercentage.setText(String.format("%.2f", percentage));
-                    if (!etMainLength.getText().toString().trim().isEmpty()) {
-                        faultLocation = cableLength * percentage / 100;
-                        tvMainFaultLocation.setText(String.format(" %.1f ", faultLocation));
+                    if (!clickManual) {
+                        tvMainPercentage.setText(String.format("%.2f", percentage));
+                        if (!etMainLength.getText().toString().trim().isEmpty()) {
+                            //计算故障距离
+                            cableLength = Double.parseDouble(etMainLength.getText().toString());
+                            faultLocation = cableLength * percentage / 100;
+                            tvMainFaultLocation.setText(String.format(" %.1f ", faultLocation));
+                        } else {
+                            tvMainFaultLocation.setText("");
+                        }
+
                     } else {
-                        tvMainFaultLocation.setText("");
+                        if (I2 >= 0.005) {
+                            //数字四舍五入显示优化 //GC20200717
+                            faultLocation = U2 / I2 / resistivity;
+                            tvMainFaultLocation.setText(String.format(" %.1f ", faultLocation));
+                        } else {
+                            tvMainFaultLocation.setText("");
+                        }
                     }
                 }
                 break;
@@ -1221,6 +1244,7 @@ public class MainActivity extends BaseActivity {
     private void showNoResistivityDialog() {
         final CustomDialog dialog = new CustomDialog(this);
         dialog.show();
+        noChange = true;
         dialog.setHintText(getString(R.string.no_resistivity));
         dialog.setLeftButton(getString(R.string.confirm), v -> {
             dialog.dismiss();
@@ -1246,6 +1270,7 @@ public class MainActivity extends BaseActivity {
         });
         dialog.setRightButton(getString(R.string.cancel), v -> {
             dialog.dismiss();
+            noChange = false;
         });
     }
 
@@ -1270,6 +1295,7 @@ public class MainActivity extends BaseActivity {
     private void showNoteDialog() {
         final CustomDialog dialog = new CustomDialog(this);
         dialog.show();
+        noChange = true;
         dialog.setHintText(getString(R.string.resistivity_note));
         dialog.setLeftButton(getString(R.string.confirm), v -> {
             dialog.dismiss();
@@ -1278,6 +1304,7 @@ public class MainActivity extends BaseActivity {
         });
         dialog.setRightButton(getString(R.string.cancel), v -> {
             dialog.dismiss();
+            noChange = false;
         });
     }
 
@@ -1359,6 +1386,107 @@ public class MainActivity extends BaseActivity {
             e.printStackTrace();
         }
         super.onDestroy();
+    }
+
+    /**
+     * 以模板生成测试报告
+     */
+    private void generateReport() {
+        HashMap<String, String> map=new HashMap<String, String>();
+
+        //电缆长度
+        map.put("${Line}", String.format("%.0f", cableLength));
+        //测试时间
+        SimpleDateFormat sdFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        Date tDate = new Date();
+        map.put("${Time}", sdFormat.format(tDate));
+        //故障段电压U
+        map.put("${FaultU}", String.format("%.1f", U2));
+        //测试电流I
+        map.put("${FaultI}", String.format("%.2f", I2));
+        //故障段电阻R
+        map.put("${FaultR}", String.format("%.2f", I2));
+        //电缆电阻率
+        map.put("${FaultRate}", String.format("%.3f", resistivity));
+        //故障距离
+        map.put("${FaultPos}", String.format(" %.1f ", faultLocation));
+
+        //--------------------------------------------------------------
+        Word word = new Word(getApplicationContext());
+        /*String filePath = getModelFilePath(MainActivity.this, tmpFile);
+        String filePath1 = filePath  + "/"+ tmpFileName;
+        String filePath2 = filePath  + "/"+ saveFileName + sdFormat.format(tDate) + ".doc";
+
+        if( !word.copyFileFromAssets(tmpFileName, filePath1) ) {
+            return;
+        }
+        if(!word.replaceDoc(filePath1, filePath2, map)) {
+            return;
+        }
+        word.showDocIntent(this, filePath2);*/
+
+        //--------------------------------------------------------------
+        String DataPath;
+        try {
+            DataPath = Word.getDataPath(getString(R.string.app_name));
+        } catch (IOException e) {
+            e.printStackTrace();
+            return;
+        }
+        if( !word.copyFileFromAssets(tmpFileName, DataPath + tmpFileName) ) {
+            return;
+        }
+        if( !word.replaceDoc(DataPath + tmpFileName, DataPath + saveFileName, map) ) {
+            return;
+        }
+        word.showDocIntent(this, DataPath + saveFileName);
+
+    }
+
+    public static String getModelFilePath(Context context, String modelName) {
+        copyFileIfNeed(context,modelName);
+        return context.getFilesDir().getAbsolutePath() + File.separator + modelName;
+    }
+
+    /**
+     * 拷贝asset下的文件到context.getFilesDir()目录下
+     */
+    private static void copyFileIfNeed(Context context, String modelName) {
+        InputStream is = null;
+        OutputStream os = null;
+        try {
+            // 默认存储在data/data/<application name>/file目录下
+            File modelFile = new File(context.getFilesDir(), modelName);
+            is = context.getAssets().open(modelName);
+            if (modelFile.length() == is.available()) {
+                return;
+            }
+            os = new FileOutputStream(modelFile);
+            byte[] buffer = new byte[1024];
+            int length = is.read(buffer);
+            while (length > 0) {
+                os.write(buffer, 0, length);
+                length = is.read(buffer);
+            }
+            os.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (os != null) {
+                try {
+                    os.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (is != null) {
+                try {
+                    is.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 
     private void initDate() {
