@@ -262,6 +262,8 @@ public class MainActivity extends BaseActivity {
     RelativeLayout rlMainLength;
     @BindView(R.id.rl_main_length2)
     RelativeLayout rlMainLength2;
+    @BindView(R.id.iv_paired_logo)
+    ImageView ivPairedLogo;
 
 
     private PopupWindow replyPopupWindow;
@@ -351,10 +353,14 @@ public class MainActivity extends BaseActivity {
         switch (msg.what) {
             case LINK_LOST:
                 Log.e(TAG, "无连接！");
+                //GC20200727
+                ivPairedLogo.setImageResource(R.drawable.ic_no_paired_device);
+                resetUI();
                 Util.showToast(this, getResources().getString(R.string.link_lost));
                 break;
             case LINK_CONNECT:
                 Log.e(TAG, "已连接！");
+                ivPairedLogo.setImageResource(R.drawable.ic_paired);
                 Toast.makeText(this, getResources().getString(R.string.connect) + " " + bluetoothDevice.getName() + " " + getResources().getString(R.string.success), Toast.LENGTH_SHORT).show();
                 break;
             case UI_REFRESH:
@@ -485,6 +491,11 @@ public class MainActivity extends BaseActivity {
                             blueStream = new int[1024];
                             blueStreamLen = 0;
                             processingStream = false;
+                            //GC20200727 添加
+                            streamLeft = null;
+                            streamLeft = new int[6];
+                            leftLen = 0;
+                            hasLeft = false;
                             //启动蓝牙连接线程
                             needConnect = false;
                             new Thread(() -> {
@@ -495,15 +506,15 @@ public class MainActivity extends BaseActivity {
                             return;
                         }
                         len = inputStream.read(buffer, 0, buffer.length);
-                        Log.i("每个输入流", "len: " + len + "  时间：" + System.currentTimeMillis());
+//                        Log.e("每个输入流", "len: " + len + "  时间：" + System.currentTimeMillis());
                         //将传过来的字节数组转变为int数组
                         for (int i = 0, j = streamLength; i < len; i++, j++) {
                             stream[j] = buffer[i] & 0xff;
                         }
                         streamLength += len;
-                        Log.i("要处理的蓝牙数据", "streamLength:" + streamLength);
+//                        Log.e("要处理的蓝牙数据", "streamLength:" + streamLength);
                         //在不处理数据时缓存数个输入流
-                        if (streamLength >= 70 && !processingStream) {
+                        if (streamLength >= 60 && !processingStream) {
                             System.arraycopy(stream, 0, blueStream, 0, streamLength);
                             blueStreamLen = streamLength;
                             processingStream = true;
@@ -534,6 +545,11 @@ public class MainActivity extends BaseActivity {
                     blueStream = new int[1024];
                     blueStreamLen = 0;
                     processingStream = false;
+                    //GC20200727 添加
+                    streamLeft = null;
+                    streamLeft = new int[6];
+                    leftLen = 0;
+                    hasLeft = false;
                     //启动蓝牙连接线程
                     needConnect = false;
                     new Thread(() -> {
@@ -624,7 +640,7 @@ public class MainActivity extends BaseActivity {
             }
             for (int i1 = 0; i1 < 6; i1++) {
                 //找数据头 FF FF
-                if ((temp[i1] == 0xFF) && (temp[i1 + 1] == 0xFF)) {
+                if ((streamLeft[i1] == 0xFF) && (streamLeft[i1 + 1] == 0xFF)) {
                     for (int i2 = 0, j = i1; i2 < 6; i2++, j++) {
                         if (j >= 6) {
                             receivedData[i2] = temp[i + j - leftLen];
@@ -634,6 +650,7 @@ public class MainActivity extends BaseActivity {
                         }
                         //处理数据包
                         doStream(receivedData);
+                        i1 += 5;
                     }
                 }
             }
@@ -649,6 +666,7 @@ public class MainActivity extends BaseActivity {
                 }
                 //处理数据包
                 doStream(receivedData);
+                i += 5;
             }
             dataNum = i;
         }
@@ -676,12 +694,16 @@ public class MainActivity extends BaseActivity {
 
         valueU = data[2] * 256 + data[3];
         valueI = data[4] * 256 + data[5];
-//        Log.e(TAG, "valueU = " + valueU);
-//        Log.e(TAG, "valueI = " + valueI);
-        //G?
-        voltageSum = voltageSum + valueU * 800. / 81.;
-        currentSum = currentSum + valueI * 64. / 5200.;
-        j++;
+        Log.e(TAG, "valueU = " + valueU);
+        Log.e(TAG, "valueI = " + valueI);
+        //无效数据处理    //GC20200727
+        if ((valueU == 0) || (valueI == 0)) {
+        } else {
+            //G?
+            voltageSum = voltageSum + valueU * 800. / 81.;
+            currentSum = currentSum + valueI * 64. / 5200.;
+            j++;
+        }
         if (j == 10) {
             //电压平均值
             voltage = voltageSum / 10;
@@ -690,7 +712,11 @@ public class MainActivity extends BaseActivity {
             if (pageCoding == 2) {
                 if (!noChange) {
                     U1 = voltage;
+                    //取整
+//                    U1 = Math.round(U1 + 0.5);
                     I1 = current;
+                    //保留2位小数
+//                    I1 = Math.round(I1 * 100. + 0.5) / 100.;
                     if (current >= 0.005) {
                         //GC20200717
                         resistance = U1 / I1;
@@ -706,7 +732,7 @@ public class MainActivity extends BaseActivity {
                     //GC20200717
                     if (resistance != 0.0) {
                         percentage = (U2 / I2) / resistance * 100;
-                    }else {
+                    } else {
                         percentage = 0.00;
                     }
                 } else {
@@ -714,7 +740,6 @@ public class MainActivity extends BaseActivity {
                 }
             }
             handle.sendEmptyMessage(UI_REFRESH);
-
             //重置
             voltageSum = 0.0;
             currentSum = 0.00;
@@ -773,16 +798,16 @@ public class MainActivity extends BaseActivity {
             case R.id.btn_sheath_next:
                 if (pageCoding < 4) {
                     if (pageCoding == 2) {
-                        if(clickManual && !etSheathResistivity.getText().toString().trim().isEmpty()) {
+                        if (clickManual && !etSheathResistivity.getText().toString().trim().isEmpty()) {
                             resistivity = Double.parseDouble(etSheathResistivity.getText().toString());
                         }
                         //测量电阻率界面
-                        if ( etSheathResistivity.getText().toString().trim().isEmpty()
+                        if (etSheathResistivity.getText().toString().trim().isEmpty()
                                 || etSheathResistivity.getText().toString().trim().equals("0")
                                 || etSheathResistivity.getText().toString().trim().equals("0.0")
                                 || etSheathResistivity.getText().toString().trim().equals("0.00")
-                                || etSheathResistivity.getText().toString().trim().equals("0.000") ) {
-                            if (clickManual){
+                                || etSheathResistivity.getText().toString().trim().equals("0.000")) {
+                            if (clickManual) {
                                 showManualNoResistivityDialog();
                             } else {
                                 showNoResistivityDialog();
@@ -810,23 +835,23 @@ public class MainActivity extends BaseActivity {
             case R.id.btn_main_next:
                 if (pageCoding < 4) {
                     if (pageCoding == 2) {
-                        if(clickManual && !etMainResistivity.getText().toString().trim().isEmpty()) {
+                        if (clickManual && !etMainResistivity.getText().toString().trim().isEmpty()) {
                             resistivity = Double.parseDouble(etMainResistivity.getText().toString());
                         }
                         if (etMainResistivity.getText().toString().trim().isEmpty()
-                                || resistivity == 0 ) {
+                                || resistivity == 0) {
 //                                || etMainResistivity.getText().toString().trim().equals("0")
 //                                || etSheathResistivity.getText().toString().trim().equals("0.0")
 //                                || etSheathResistivity.getText().toString().trim().equals("0.00")
 //                                || etSheathResistivity.getText().toString().trim().equals("0.000") ) {
-                            if (clickManual){
+                            if (clickManual) {
                                 showManualNoResistivityDialog();
                             } else {
                                 showNoResistivityDialog();
                             }
                         } else if (I1 < 10 && !clickManual) {
                             showNoteDialog();
-                        }else {
+                        } else {
                             pageCoding++;
                             switchInterface();
                         }
@@ -1110,7 +1135,7 @@ public class MainActivity extends BaseActivity {
                         rlMainDistancePercentage2.setVisibility(View.VISIBLE);
                         rlMainLength.setVisibility(View.VISIBLE);
                         rlMainLength2.setVisibility(View.VISIBLE);
-                    }else {
+                    } else {
                         rlMainDistancePercentage.setVisibility(View.GONE);
                         rlMainDistancePercentage2.setVisibility(View.GONE);
                         rlMainLength.setVisibility(View.GONE);
@@ -1147,7 +1172,7 @@ public class MainActivity extends BaseActivity {
                         if (!etSheathLength.getText().toString().trim().isEmpty()) {
                             //计算电阻率
                             cableLength = Double.parseDouble(etSheathLength.getText().toString());
-                            if ( (cableLength != 0.0) && (resistance != 0.0) ) {
+                            if ((cableLength != 0.0) && (resistance != 0.0)) {
                                 resistivity = U1 / I1 / cableLength;
                                 //电阻率：3位小数
                                 etSheathResistivity.setText(String.format("%.3f", resistivity));
@@ -1165,7 +1190,7 @@ public class MainActivity extends BaseActivity {
                         if (!etMainLength.getText().toString().trim().isEmpty()) {
                             //计算电阻率
                             cableLength = Double.parseDouble(etMainLength.getText().toString());
-                            if ( (cableLength != 0.0) && (resistance != 0.0) ) {
+                            if ((cableLength != 0.0) && (resistance != 0.0)) {
                                 resistivity = U1 / I1 / cableLength;
                                 //电阻率：3位小数
                                 etMainResistivity.setText(String.format("%.3f", resistivity));
@@ -1231,6 +1256,58 @@ public class MainActivity extends BaseActivity {
                             tvMainFaultLocation.setText("");
                         }
                     }
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
+    /**
+     * 数据显示清零
+     */
+    private void resetUI() {
+        switch (pageCoding) {
+            case 0:
+                break;
+            case 1:
+                break;
+            case 2:
+                //测量电阻率界面
+                if (!clickManual) {
+                    if (!modeState) {
+                        //测试电压：1位小数   测试电流：2位小数   测试电阻：1位小数
+                        tvSheathTestVoltage.setText("");
+                        tvSheathTestCurrent.setText("");
+                        tvSheathResistance.setText("");
+                        etSheathResistivity.setText("");
+                    } else {
+                        tvMainTestVoltage.setText("");
+                        tvMainTestCurrent.setText("");
+                        tvMainResistance.setText("");
+                        etMainResistivity.setText("");
+                    }
+                }
+                break;
+            case 3:
+                break;
+            case 4:
+                //故障距离界面
+                if (!modeState) {
+                    //测试电压：1位小数   测试电流：2位小数   距离百分比：2位小数
+                    tvSheathTestVoltage.setText("");
+                    tvSheathTestCurrent.setText("");
+                    if (!clickManual) {
+                        tvSheathPercentage.setText("");
+                    }
+                    tvSheathFaultLocation.setText("");
+                } else {
+                    tvMainTestVoltage.setText("");
+                    tvMainTestCurrent.setText("");
+                    if (!clickManual) {
+                        tvMainPercentage.setText("");
+                    }
+                    tvMainFaultLocation.setText("");
                 }
                 break;
             default:
@@ -1392,7 +1469,7 @@ public class MainActivity extends BaseActivity {
      * 以模板生成测试报告
      */
     private void generateReport() {
-        HashMap<String, String> map=new HashMap<String, String>();
+        HashMap<String, String> map = new HashMap<String, String>();
 
         //电缆长度
         map.put("${Line}", String.format("%.0f", cableLength));
@@ -1433,10 +1510,10 @@ public class MainActivity extends BaseActivity {
             e.printStackTrace();
             return;
         }
-        if( !word.copyFileFromAssets(tmpFileName, DataPath + tmpFileName) ) {
+        if (!word.copyFileFromAssets(tmpFileName, DataPath + tmpFileName)) {
             return;
         }
-        if( !word.replaceDoc(DataPath + tmpFileName, DataPath + saveFileName, map) ) {
+        if (!word.replaceDoc(DataPath + tmpFileName, DataPath + saveFileName, map)) {
             return;
         }
         word.showDocIntent(this, DataPath + saveFileName);
@@ -1444,7 +1521,7 @@ public class MainActivity extends BaseActivity {
     }
 
     public static String getModelFilePath(Context context, String modelName) {
-        copyFileIfNeed(context,modelName);
+        copyFileIfNeed(context, modelName);
         return context.getFilesDir().getAbsolutePath() + File.separator + modelName;
     }
 

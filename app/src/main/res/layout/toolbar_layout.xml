@@ -8,13 +8,21 @@
     android:gravity="center_vertical">
 
     <ImageView
+        android:id="@+id/iv_paired_logo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="left"
+        android:layout_marginRight="@dimen/size_15"
+        android:src="@drawable/ic_paired" />
+
+    <ImageView
         android:id="@+id/iv_title_logo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="left"
         android:layout_marginRight="@dimen/size_15"
-        android:src="@drawable/ic_title_logo"
-        android:visibility="gone" />
+        android:src="@drawable/ic_title_logo" />
+
     <!--导航栏中间的标题-->
     <LinearLayout
         android:id="@+id/ll_back"

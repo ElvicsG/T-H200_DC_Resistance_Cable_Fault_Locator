@@ -106,3 +106,4 @@ public class BaseActivity extends AppCompatActivity {
 //GC20200717    数字四舍五入显示优化
 //G?
 //GT
+//GC20200727    添加
