@@ -330,6 +330,7 @@ public class MainActivity extends BaseActivity {
      * 数值计算和显示
      */
     private int j = 0;
+    private int k = 0;  //GC20220428
     private double voltageSum = 0.0;
     private double currentSum = 0.00;
     private double U1;
@@ -697,18 +698,48 @@ public class MainActivity extends BaseActivity {
         Log.e(TAG, "valueU = " + valueU);
         Log.e(TAG, "valueI = " + valueI);
         //无效数据处理    //GC20200727
-        if ((valueU == 0) || (valueI == 0)) {
+//        if ((valueU == 0) || (valueI == 0)) {
+        if ( (valueI == 0)) {
+            //数据处理异常，混杂一组电流为0的数据，不处理    //GC20220428
+            k++;
+            if (k == 10) {
+                voltageSum = 0.0;
+                currentSum = 0.1;   //设备快速关机电压不清零
+                k = 0;
+                j = 10;
+            }
         } else {
-            //G?
             voltageSum = voltageSum + valueU * 800. / 81.;
-            currentSum = currentSum + valueI * 64. / 5200.;
+            currentSum = currentSum + valueI * 64. / 5200.; //GN20220422 硬件电路参数
             j++;
         }
         if (j == 10) {
             //电压平均值
             voltage = voltageSum / 10;
             //电流平均值     //有系数 0.98;
-            current = currentSum / 10 * 98 / 100;
+//            current = currentSum / 10 * 98 / 100; //系数校准  //GC20220422
+            if (currentSum <= 10) {
+                currentSum = currentSum * 1.0018;
+            } else if ( (currentSum > 10) && (currentSum <= 35)) {
+                currentSum = currentSum * 1.00411719745;
+            }  else if ( (currentSum > 35) && (currentSum <= 60)) {
+                currentSum = currentSum * 1.035;
+            } else if ( (currentSum > 60) && (currentSum <= 100)) {
+                currentSum = currentSum * 1.0084320988;
+            } else if ( (currentSum > 100) && (currentSum <= 150)) {
+                currentSum = currentSum * 1.0190776699;
+            } else if ( (currentSum > 150) && (currentSum <= 200)) {
+                currentSum = currentSum * 1.0082159383;
+            } else if ( (currentSum > 200) && (currentSum <= 250)) {
+                currentSum = currentSum * 1.015034797;
+            } else if (currentSum > 250) {
+                currentSum = currentSum;
+            }
+            current = currentSum / 10;
+            //设备关机电压不清零 //GC20220425
+//            if ( current < 1.0) {
+//                voltage = 0.0;
+//            }
             if (pageCoding == 2) {
                 if (!noChange) {
                     U1 = voltage;

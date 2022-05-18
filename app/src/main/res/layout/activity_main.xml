@@ -228,6 +228,7 @@
                     android:id="@+id/iv_sheath"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_weight="7"
                     android:layout_gravity="center"
                     android:src="@drawable/ic_sheath1"
                     android:visibility="visible" />
@@ -236,6 +237,7 @@
                     android:id="@+id/tv_sheath"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_weight="1"
                     android:layout_gravity="center_horizontal"
                     android:layout_marginStart="@dimen/size_15"
                     android:layout_marginLeft="@dimen/size_15"
@@ -808,6 +810,7 @@
                     android:id="@+id/iv_main"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_weight="7"
                     android:layout_gravity="center"
                     android:src="@drawable/ic_main1"
                     android:visibility="visible" />
@@ -816,6 +819,7 @@
                     android:id="@+id/tv_main"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_weight="1"
                     android:layout_gravity="center_horizontal"
                     android:layout_marginStart="@dimen/size_15"
                     android:layout_marginLeft="@dimen/size_15"

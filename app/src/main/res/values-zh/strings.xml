@@ -148,5 +148,7 @@
     <string name="btn_input">保存</string>
     <string name="cancel_manual">取消手动输入</string>
     <string name="no_resistivity_manual">手动输入时电阻率不能为0！</string>
+    <string name="app_name_icon">T-H200</string>
+    <string name="version_code">版本号：</string>
 
 </resources>

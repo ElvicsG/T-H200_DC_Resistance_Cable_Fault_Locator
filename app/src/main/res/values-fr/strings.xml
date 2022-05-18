@@ -151,5 +151,7 @@
     <string name="btn_input">Save</string>
     <string name="cancel_manual">Cancel manual input</string>
     <string name="no_resistivity_manual">The resistivity cannot be 0 when input manually!</string>
+    <string name="app_name_icon">T-H200</string>
+    <string name="version_code">version:</string>
 
 </resources>

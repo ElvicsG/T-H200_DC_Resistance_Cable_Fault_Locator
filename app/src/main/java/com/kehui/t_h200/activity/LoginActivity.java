@@ -1,6 +1,8 @@
 package com.kehui.t_h200.activity;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -93,6 +95,25 @@ public class LoginActivity extends BaseActivity {
         });
         cbForgetPassword.setChecked(true);*/
         llInput.setVisibility(View.GONE);
+        //显示当前软件版本号
+        TextView tvVersion = (TextView) this.findViewById(R.id.tv_version2);
+        tvVersion.setText(this.getResources().getString(R.string.version_code) + getVersionName(this));
+
+    }
+
+    /**
+     * @param context   运行环境、场景
+     * @return  软件版本名称
+     */
+    public String getVersionName(Context context) {
+        String versionName = "";
+        try {
+            //注意："com.example.try_downloadfile_progress"对应AndroidManifest.xml里的package="……"部分
+            versionName = context.getPackageManager().getPackageInfo("com.kehui.t_h200", 0).versionName;
+        } catch (PackageManager.NameNotFoundException e) {
+            Log.e("msg", e.getMessage());
+        }
+        return versionName;
     }
 
     /**
